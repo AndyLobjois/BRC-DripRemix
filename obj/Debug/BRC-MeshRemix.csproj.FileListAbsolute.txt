@@ -1,0 +1,7 @@
+D:\Andy\Projets\BRC MOD\2. Repositories\BRC-ModelMod\obj\Debug\BRC-MeshRemix.csproj.AssemblyReference.cache
+D:\Andy\Projets\BRC MOD\2. Repositories\BRC-ModelMod\obj\Debug\BRC-MeshRemix.csproj.CoreCompileInputs.cache
+D:\Jeux\Steam\steamapps\common\BombRushCyberfunk\BepInEx\plugins\BRC-ModelsMod\BRC-MeshRemix.dll
+D:\Jeux\Steam\steamapps\common\BombRushCyberfunk\BepInEx\plugins\BRC-ModelsMod\BRC-MeshRemix.pdb
+D:\Andy\Projets\BRC MOD\2. Repositories\BRC-ModelMod\obj\Debug\BRC-MeshRemix.csproj.CopyComplete
+D:\Andy\Projets\BRC MOD\2. Repositories\BRC-ModelMod\obj\Debug\BRC-MeshRemix.dll
+D:\Andy\Projets\BRC MOD\2. Repositories\BRC-ModelMod\obj\Debug\BRC-MeshRemix.pdb

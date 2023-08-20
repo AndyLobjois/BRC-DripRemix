@@ -1,0 +1,7 @@
+D:\Jeux\Steam\steamapps\common\LLBlaze\BepInEx\plugins\BundleFix\BundleFix.dll
+D:\Jeux\Steam\steamapps\common\LLBlaze\BepInEx\plugins\BundleFix\BundleFix.pdb
+D:\Andy\Projets\LLB MOD\2. Repositories\Mods\LLB-BundleFix\obj\Debug\LLB-BundleFix.csproj.AssemblyReference.cache
+D:\Andy\Projets\LLB MOD\2. Repositories\Mods\LLB-BundleFix\obj\Debug\LLB-BundleFix.csproj.CoreCompileInputs.cache
+D:\Andy\Projets\LLB MOD\2. Repositories\Mods\LLB-BundleFix\obj\Debug\LLB-BundleFix.csproj.CopyComplete
+D:\Andy\Projets\LLB MOD\2. Repositories\Mods\LLB-BundleFix\obj\Debug\BundleFix.dll
+D:\Andy\Projets\LLB MOD\2. Repositories\Mods\LLB-BundleFix\obj\Debug\BundleFix.pdb
