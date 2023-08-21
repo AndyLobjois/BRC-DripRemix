@@ -1,110 +1,117 @@
-﻿using BepInEx;
+﻿//using BRCML;
+using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
+using Reptile;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using Reptile;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 
 /*
 Models Mod for Bomb Rush Cyberfunk by Andy Hellgrim (Aru)
-
-TODO:
-    [X] Load the Plugin
-    [X] Load the Bundles
-    [X] Launch the main function only in Stage Scenes (update ?)
-    [ ] Check the Bundle list for item types (characters, skateboard/skates/bmx) and swap them
-
-SCENES:
-    Bootstrap
-    core
-    DontDestroyOnLoad
-    HideAndDontSave
-
-    intro
-    mainMenu
-        Prelude
-        DownHill
-        Hideout
-        Square
-        Tower
-        Mall
-        Pyramid
-        Osaka
-
- */
+*/
 
 namespace MeshRemix {
     [BepInPlugin(MeshRemixInfos.PLUGIN_ID, MeshRemixInfos.PLUGIN_NAME, MeshRemixInfos.PLUGIN_VERSION)]
-    //[BepInDependency(LLBML.PluginInfos.PLUGIN_ID, BepInDependency.DependencyFlags.HardDependency)]
-    //[BepInDependency("no.mrgentle.plugins.llb.modmenu", BepInDependency.DependencyFlags.SoftDependency)]
+    //[BepInDependency(BRCML.PluginInfos.PLUGIN_ID, BepInDependency.DependencyFlags.HardDependency)]
+    //[BepInDependency("fr.glomzubuk.plugins.brc.brcml", BepInDependency.DependencyFlags.HardDependency)]
+    
 
     public class MeshRemixMain : BaseUnityPlugin {
-        public static MeshRemixMain instance;
-        //public static DirectoryInfo PluginDir => LLBML.Utils.ModdingFolder.GetModSubFolder(instance.Info);
+        //public static MeshRemixMain instance;
+        //public static DirectoryInfo PluginDir => BRCML.Utils.ModdingFolder.GetModSubFolder(instance.Info);
         //internal static ManualLogSource Log { get; private set; }
 
-        public Scene[] scenes;
-        public Scene activeScene;
+        // Core
         public GameObject PLAYER;
-        public AssetBundle BUNDLE;
+        public AssetBundle[] BUNDLE = new AssetBundle[1];
+        bool CHECK = false;
+
+        // Asset References
+        public bool AssetsHaveBeenChecked = false;
+        public List<GameObject> characters = new List<GameObject>();
+        public List<GameObject> skates = new List<GameObject>(); //skateLeft(Clone) & skateRight(Clone)
+        public List<GameObject> skateboards = new List<GameObject>(); //skateboard
+        public List<GameObject> bmxs = new List<GameObject>(); //bmxFrame
 
         static public void log(string message) {
-            Debug.Log($"[ModelsMod] {message}");
+            Debug.Log($"[MeshRemix] {message}");
         }
 
         void Awake() {
-            log("ModelsMod is loaded");
-            activeScene = SceneManager.GetActiveScene();
-
-            BUNDLE = AssetBundle.LoadFromFile(Paths.BepInExRootPath + "/plugins/BRC-ModelsMod/Assets/skateboard/skateboard");
-
+            // BepInEx Stuff
             //instance = this;
             //Log = this.Logger;
             //Log.LogInfo(PluginDir);
-            //var harmony = new Harmony(BundleFixInfos.PLUGIN_NAME);
+            //var harmony = new Harmony(MeshRemixInfos.PLUGIN_NAME);
             //harmony.PatchAll();
+            log("MeshRemix is loaded !");
+
+            // Get Bundles
+            BUNDLE[0] = AssetBundle.LoadFromFile(Paths.BepInExRootPath + $"/plugins/BRC-{MeshRemixInfos.PLUGIN_NAME}/Assets/skateboard/skateboard");
         }
 
-        void Update() {
-            Swap();
-        }
+        void LateUpdate() {
+            var worldHandler = WorldHandler.instance?.enabled;
+            if (worldHandler != null && !CHECK) {
+                GetPLAYER();
+                GetASSETS(PLAYER.transform.GetChild(0));
+                log("Assets have been collected !");
+                StartCoroutine("SetASSETS");
 
-        void Swap() {
-            scenes = SceneManager.GetAllScenes();
-            for (int i = 0; i < scenes.Length; i++) {
-                if (scenes[i].name == "intro" || scenes[i].name == "mainMenu") {
-                    return;
-                } else if (!PLAYER) {
-                    // Init PLAYER
-                    PLAYER = GameObject.Find("Player_HUMAN0");
-                    log("Player_HUMAN0 found !");
+                CHECK = true;
+            }
 
-                    // Search for the Skateboard
-                    RecursiveSearch(PLAYER.transform.GetChild(0).GetChild(PLAYER.transform.GetChild(0).childCount - 1), "skateboard");
-                }
+            if (worldHandler == null) {
+                skates.Clear();
+                skateboards.Clear();
+                bmxs.Clear();
+                CHECK = false;
             }
         }
 
+        void GetPLAYER() {
+            PLAYER = GameObject.Find("Player_HUMAN0");
+            log("Player_HUMAN0 is referenced !");
+        }
 
-        void RecursiveSearch(Transform parent, string name, int level = 0) {
+        
+        void GetASSETS(Transform parent, int level = 0) { // Recursive Search Function
             foreach (Transform child in parent) {
-                if (child.name == name) {
-                    // Change the skateboard and particle
-                    Mesh _mesh = BUNDLE.LoadAsset<Mesh>("skateboard");
-                    child.GetChild(0).GetComponent<MeshFilter>().mesh = _mesh;
-                    child.GetChild(0).GetChild(0).GetComponent<ParticleSystemRenderer>().mesh = _mesh; // IMPORTANT: Mesh need to have Read/Write enable in the Import Settings of Unity
-                    log(child.GetChild(0).GetChild(0).name);
+                if (child.name == "skateLeft(Clone)")
+                    skates.Add(child.gameObject);
 
-                    log($"SKATEBOARD FOUND → {child.parent.parent.name}/{child.parent.name}/{child.name}");
-                }
+                if (child.name == "skateRight(Clone)")
+                    skates.Add(child.gameObject);
+
+                if (child.name == "skateboard(Clone)")
+                    skateboards.Add(child.gameObject);
+
+                if (child.name == "bmxFrame(Clone)")
+                    bmxs.Add(child.gameObject);
 
                 // Process next deeper level
-                RecursiveSearch(child, name, level + 1);
+                GetASSETS(child, level + 1);
             }
+        }
+
+        IEnumerator SetASSETS() {
+            yield return new WaitForSeconds(0.1f); // Workaround, I'm waiting for lists to be complete
+            Mesh skateboardMesh = BUNDLE[0].LoadAsset<Mesh>("skateboard");
+
+            for (int i = 0; i < skateboards.Count; i++) {
+                // Mesh
+                skateboards[i].transform.GetComponent<MeshFilter>().mesh = skateboardMesh;
+
+                // White Particle Spawning Mesh (IMPORTANT: Mesh need to have Read/Write enable in the Import Settings of Unity)
+                if (skateboards[i].transform.childCount > 0) {
+                    skateboards[i].transform.GetChild(0).GetComponent<ParticleSystemRenderer>().mesh = skateboardMesh;
+                }
+            }
+
+            log($"'skateboard' have been swapped !");
         }
     }
 }
