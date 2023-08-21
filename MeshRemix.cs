@@ -1,28 +1,30 @@
-﻿//using BRCML;
+﻿using System;
+using System.IO;
+using System.Collections;
+using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
-using Reptile;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Reptile;
+using BRCML;
 
 /*
 Models Mod for Bomb Rush Cyberfunk by Andy Hellgrim (Aru)
 */
 
 namespace MeshRemix {
-    [BepInPlugin(MeshRemixInfos.PLUGIN_ID, MeshRemixInfos.PLUGIN_NAME, MeshRemixInfos.PLUGIN_VERSION)]
-    //[BepInDependency(BRCML.PluginInfos.PLUGIN_ID, BepInDependency.DependencyFlags.HardDependency)]
-    //[BepInDependency("fr.glomzubuk.plugins.brc.brcml", BepInDependency.DependencyFlags.HardDependency)]
-    
 
-    public class MeshRemixMain : BaseUnityPlugin {
-        //public static MeshRemixMain instance;
-        //public static DirectoryInfo PluginDir => BRCML.Utils.ModdingFolder.GetModSubFolder(instance.Info);
-        //internal static ManualLogSource Log { get; private set; }
+    [BepInPlugin(MeshRemixInfos.PLUGIN_ID, MeshRemixInfos.PLUGIN_NAME, MeshRemixInfos.PLUGIN_VERSION)]
+    [BepInDependency(BRCML.PluginInfos.PLUGIN_ID, BepInDependency.DependencyFlags.HardDependency)]
+    [BepInProcess("Bomb Rush Cyberfunk.exe")]
+    public class MeshRemix : BaseUnityPlugin {
+
+        public static MeshRemix instance;
+        internal static DirectoryInfo ModdingFolder { get; private set; } = null;
+        //private static DirectoryInfo PluginDir => BRCML.Utils.ModdingFolder.GetModSubFolder(instance.Info);
+        internal static ManualLogSource Log { get; private set; }
 
         // Core
         public GameObject PLAYER;
@@ -32,9 +34,9 @@ namespace MeshRemix {
         // Asset References
         public bool AssetsHaveBeenChecked = false;
         public List<GameObject> characters = new List<GameObject>();
-        public List<GameObject> skates = new List<GameObject>(); //skateLeft(Clone) & skateRight(Clone)
-        public List<GameObject> skateboards = new List<GameObject>(); //skateboard
-        public List<GameObject> bmxs = new List<GameObject>(); //bmxFrame
+        public List<GameObject> skates = new List<GameObject>();
+        public List<GameObject> skateboards = new List<GameObject>();
+        public List<GameObject> bmxs = new List<GameObject>();
 
         static public void log(string message) {
             Debug.Log($"[MeshRemix] {message}");
@@ -42,15 +44,26 @@ namespace MeshRemix {
 
         void Awake() {
             // BepInEx Stuff
-            //instance = this;
-            //Log = this.Logger;
+            instance = this;
+            Log = this.Logger;
             //Log.LogInfo(PluginDir);
             //var harmony = new Harmony(MeshRemixInfos.PLUGIN_NAME);
             //harmony.PatchAll();
-            log("MeshRemix is loaded !");
 
-            // Get Bundles
-            BUNDLE[0] = AssetBundle.LoadFromFile(Paths.BepInExRootPath + $"/plugins/BRC-{MeshRemixInfos.PLUGIN_NAME}/Assets/skateboard/skateboard");
+            log("MeshRemix is loaded !");
+            //BUNDLE[0] = AssetBundle.LoadFromFile(Paths.BepInExRootPath + $"/plugins/BRC-{MeshRemixInfos.PLUGIN_NAME}/Assets/skateboard/skateboard");
+        }
+
+        void Start() {
+            ModdingFolder = BRCML.Utils.ModdingFolder.GetModSubFolder(this.Info);
+            log("YO-1");
+            DirectoryInfo dir = ModdingFolder.CreateSubdirectory("Meshes");
+            log("YO-2");
+            FileInfo[] files = dir.GetFiles();
+            log("YO-3");
+            foreach (FileInfo file in files) {
+                log(file.Name);
+            }
         }
 
         void LateUpdate() {
