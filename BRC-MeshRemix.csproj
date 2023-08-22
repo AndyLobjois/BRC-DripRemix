@@ -77,6 +77,12 @@
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>libs\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
+      <Aliases>global</Aliases>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>libs\UnityEngine.InputLegacyModule.dll</HintPath>
+      <Private>False</Private>
+      <Aliases>global</Aliases>
     </Reference>
     <Reference Include="UnityEngine.ParticleSystemModule">
       <HintPath>libs\UnityEngine.ParticleSystemModule.dll</HintPath>
