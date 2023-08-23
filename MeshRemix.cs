@@ -11,6 +11,7 @@ using UnityEditor;
 using UnityEngine.SceneManagement;
 using Reptile;
 using BRCML;
+using BRCML.Utils;
 
 /*
 Models Mod for Bomb Rush Cyberfunk by Andy Hellgrim (Aru)
@@ -23,9 +24,10 @@ namespace MeshRemix {
     [BepInProcess("Bomb Rush Cyberfunk.exe")]
     public class MeshRemix : BaseUnityPlugin {
 
-        public static MeshRemix instance;
+        public static MeshRemix Instance;
         internal static DirectoryInfo ModdingFolder { get; private set; } = null;
-        //private static DirectoryInfo PluginDir => BRCML.Utils.ModdingFolder.GetModSubFolder(instance.Info);
+        internal static DirectoryInfo CharactersFolder => ModdingFolder.CreateSubdirectory("Characters");
+        internal static DirectoryInfo GearsFolder => ModdingFolder.CreateSubdirectory("Gears");
         internal static ManualLogSource Log { get; private set; }
 
         // Core
@@ -37,13 +39,13 @@ namespace MeshRemix {
         public int GEAR_CUSTOM_INDEX;
 
         // BUNDLES LISTS
-        public List<AssetBundle> raveBundles = new List<AssetBundle>();
+        public Dictionary<Characters, List<AssetBundle>> charBundles = new Dictionary<Characters, List<AssetBundle>>();
         public List<AssetBundle> inlineBundles = new List<AssetBundle>();
         public List<AssetBundle> skateboardBundles = new List<AssetBundle>();
         public List<AssetBundle> bmxBundles = new List<AssetBundle>();
 
         // GAMEOBJECTS LISTS
-        public GameObject raveReference;
+        public Dictionary<Characters, GameObject> charReference;
         public List<GameObject> inlineReferences = new List<GameObject>();
         public List<GameObject> skateboardReferences = new List<GameObject>();
         public List<GameObject> bmxReferences = new List<GameObject>();
@@ -53,9 +55,9 @@ namespace MeshRemix {
         }
 
         void Awake() {
-            instance = this;
+            Instance = this;
             Log = this.Logger;
-            //Log.LogInfo(PluginDir);
+            ModdingFolder = BRCML.Utils.ModdingFolder.GetModSubFolder(this.Info);
             //var harmony = new Harmony(MeshRemixInfos.PLUGIN_NAME);
             //harmony.PatchAll();
 
@@ -65,10 +67,20 @@ namespace MeshRemix {
             GEAR_CUSTOM_INDEX = 0;
 
             // Get All Bundles
-            GetBUNDLES("Characters", "Rave", raveBundles);
-            GetBUNDLES("Gears", "Inline", inlineBundles);
-            GetBUNDLES("Gears", "Skateboard", skateboardBundles);
-            GetBUNDLES("Gears", "BMX", bmxBundles);
+            foreach (Characters character in characterNamesMap.Keys)
+            {
+                charBundles[character] = new List<AssetBundle>();
+                //TODO Use the human readable name, not the machine name
+                GetBUNDLES(CharactersFolder.CreateSubdirectory(CharacterToString(character)), charBundles[character]);
+
+            }
+            GetBUNDLES(GearsFolder.CreateSubdirectory("Inline"), inlineBundles);
+            GetBUNDLES(GearsFolder.CreateSubdirectory("Skateboard"), skateboardBundles);
+            GetBUNDLES(GearsFolder.CreateSubdirectory("BMX"), bmxBundles);
+        }
+
+        void Start()
+        {
         }
 
         void LateUpdate() {
@@ -104,26 +116,30 @@ namespace MeshRemix {
             }
         }
 
-        void GetBUNDLES(string parentFolder, string childFolder, List<AssetBundle> bundlesList) {
-            string[] pathsList = Directory.GetFiles(Application.dataPath + "/../" + $"/ModdingFolder/{parentFolder}/{childFolder}", "*", SearchOption.AllDirectories);
+        void GetBUNDLES(DirectoryInfo bundleDir, List<AssetBundle> bundlesList) {
+            FileInfo[] pathsList = bundleDir.GetFiles("*", SearchOption.AllDirectories);
 
-            foreach (string path in pathsList) {
-                AssetBundle bundle = AssetBundle.LoadFromFile(path);
+            foreach (FileInfo path in pathsList) {
+                AssetBundle bundle = AssetBundle.LoadFromFile(path.FullName);
                 bundlesList.Add(bundle);
                 log($"<b>{bundle.name}</b> bundle loaded !");
             }
         }
 
         void GetPLAYER() {
-            PLAYER = GameObject.Find("Player_HUMAN0");
+            //PLAYER = GameObject.Find("Player_HUMAN0");
+            PLAYER = WorldHandler.instance?.currentPlayer.gameObject;
             log("Player_HUMAN0 is referenced !");
         }
 
         void GetOBJECTS(Transform parent, int level = 0) { // Recursive Search Function
             foreach (Transform child in parent) {
                 // Characters
-                if (child.name == "angel(Clone)")
-                    raveReference = child.Find("mesh").gameObject;
+                foreach(Characters character in characterNamesMap.Keys)
+                {
+                    if (child.name == character + "(Clone)")
+                        charReference[character] = child.Find("mesh").gameObject;
+                }
 
                 // Movestyles
                 if (child.name == "skateLeft(Clone)")
@@ -147,8 +163,11 @@ namespace MeshRemix {
             yield return new WaitForSeconds(0.1f); // Workaround, I'm waiting for lists to be complete
 
             // Characters
-            if (raveBundles.Count > 0)
-                SetCharacter(raveBundles, raveReference, 0);
+            foreach (Characters character in characterNamesMap.Keys)
+            {
+                if (charBundles[character].Count > 0)
+                    SetCharacter(character, charBundles[character], charReference[character], 0);
+            }
 
             // Gears
             if (inlineBundles.Count > 0)
@@ -162,13 +181,14 @@ namespace MeshRemix {
         }
 
         GameObject plop = new GameObject();
-        void SetCharacter(List<AssetBundle> bundlesList, GameObject reference, int index) {
+        void SetCharacter(Characters character, List<AssetBundle> bundlesList, GameObject reference, int index) {
             // Replace Character with the new Character
             
             Instantiate(plop);
             plop.transform.parent = PLAYER.transform;
             plop.AddComponent<SkinnedMeshRenderer>();
-            plop.GetComponent<SkinnedMeshRenderer>().sharedMesh = bundlesList[index].LoadAsset<Mesh>("rave.fbx");
+            string fbxName = characterNamesMap[character].ToLower() + ".fbx";
+            plop.GetComponent<SkinnedMeshRenderer>().sharedMesh = bundlesList[index].LoadAsset<Mesh>(fbxName);
 
             reference.transform.GetComponent<SkinnedMeshRenderer>().sharedMesh = plop.GetComponent<SkinnedMeshRenderer>().sharedMesh;
 
@@ -191,6 +211,22 @@ namespace MeshRemix {
             }
 
             log($"Load: {bundlesList[index].name}");
+        }
+
+        public Dictionary<Characters, string> characterNamesMap = new Dictionary<Characters, string>()
+        {
+            [Characters.metalHead] = "Red",
+            [Characters.angel] = "Rave"
+            //TODO To complete
+        };
+
+        public string CharacterToString(Characters character)
+        {
+            if (characterNamesMap.ContainsKey(character))
+            {
+                return characterNamesMap[character];
+            }
+            return character.ToString();
         }
     }
 }
