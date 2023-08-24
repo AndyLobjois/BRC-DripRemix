@@ -3,19 +3,13 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using BepInEx;
-using BepInEx.Configuration;
 using BepInEx.Logging;
+using BepInEx.Configuration;
 using HarmonyLib;
 using UnityEngine;
-using UnityEditor;
-using UnityEngine.SceneManagement;
 using Reptile;
 using BRCML;
 using BRCML.Utils;
-
-/*
-Models Mod for Bomb Rush Cyberfunk by Andy Hellgrim (Aru)
-*/
 
 namespace MeshRemix {
 
@@ -26,29 +20,30 @@ namespace MeshRemix {
 
         public static MeshRemix Instance;
         internal static DirectoryInfo ModdingFolder { get; private set; } = null;
-        internal static DirectoryInfo CharactersFolder => ModdingFolder.CreateSubdirectory("Characters");
-        internal static DirectoryInfo GearsFolder => ModdingFolder.CreateSubdirectory("Gears");
+        internal static DirectoryInfo CHARFOLDER => ModdingFolder.CreateSubdirectory("Characters");
+        internal static DirectoryInfo GEARFOLDER => ModdingFolder.CreateSubdirectory("Gears");
         internal static ManualLogSource Log { get; private set; }
 
         // Core
         public GameObject PLAYER;
+        public MoveStyle CURRENTMOVESTYLE;
         bool CHECK = false;
-        public string CHAR_STATE = "Rave"; // Not used yet
-        public int CHAR_CUSTOM_INDEX;
-        public string GEAR_STATE = "Skateboard"; // Not used yet
-        public int GEAR_CUSTOM_INDEX;
+        public int INDEX_CHAR;
+        public int INDEX_INLINE;
+        public int INDEX_SKATEBOARD;
+        public int INDEX_BMX;
 
         // BUNDLES LISTS
-        public Dictionary<Characters, List<AssetBundle>> charBundles = new Dictionary<Characters, List<AssetBundle>>();
-        public List<AssetBundle> inlineBundles = new List<AssetBundle>();
-        public List<AssetBundle> skateboardBundles = new List<AssetBundle>();
-        public List<AssetBundle> bmxBundles = new List<AssetBundle>();
+        public Dictionary<Characters, List<AssetBundle>> BUNDLES_CHARACTER = new Dictionary<Characters, List<AssetBundle>>();
+        public List<AssetBundle> BUNDLES_INLINE = new List<AssetBundle>();
+        public List<AssetBundle> BUNDLES_SKATEBOARD = new List<AssetBundle>();
+        public List<AssetBundle> BUNDLES_BMX = new List<AssetBundle>();
 
         // GAMEOBJECTS LISTS
-        public Dictionary<Characters, GameObject> charReference;
-        public List<GameObject> inlineReferences = new List<GameObject>();
-        public List<GameObject> skateboardReferences = new List<GameObject>();
-        public List<GameObject> bmxReferences = new List<GameObject>();
+        public Dictionary<Characters, GameObject> REFS_CHARACTER;
+        public List<GameObject> REFS_INLINE = new List<GameObject>();
+        public List<GameObject> REFS_SKATEBOARD = new List<GameObject>();
+        public List<GameObject> REFS_BMX = new List<GameObject>();
 
         static public void log(string message) {
             Debug.Log($"<color=orange>[MeshRemix] {message}</color>");
@@ -57,173 +52,247 @@ namespace MeshRemix {
         void Awake() {
             Instance = this;
             Log = this.Logger;
-            ModdingFolder = BRCML.Utils.ModdingFolder.GetModSubFolder(this.Info);
+            //ModdingFolder = BRCML.Utils.ModdingFolder.GetModSubFolder(this.Info);
             //var harmony = new Harmony(MeshRemixInfos.PLUGIN_NAME);
             //harmony.PatchAll();
 
             log("MeshRemix is loaded !");
 
-            // Init
-            GEAR_CUSTOM_INDEX = 0;
+            // Init Index
+            INDEX_CHAR = 0;
+            INDEX_INLINE = 0;
+            INDEX_SKATEBOARD = 0;
+            INDEX_BMX = 0;
 
             // Get All Bundles
-            foreach (Characters character in characterNamesMap.Keys)
-            {
-                charBundles[character] = new List<AssetBundle>();
-                //TODO Use the human readable name, not the machine name
-                GetBUNDLES(CharactersFolder.CreateSubdirectory(CharacterToString(character)), charBundles[character]);
+            //foreach (Characters character in characterNamesMap.Keys)
+            //{
+            //    BUNDLES_CHARACTER[character] = new List<AssetBundle>();
+            //    //TODO Use the human readable name, not the machine name
+            //    GetBUNDLES(CHARFOLDER.CreateSubdirectory(CharacterToString(character)), BUNDLES_CHARACTER[character]);
 
-            }
-            GetBUNDLES(GearsFolder.CreateSubdirectory("Inline"), inlineBundles);
-            GetBUNDLES(GearsFolder.CreateSubdirectory("Skateboard"), skateboardBundles);
-            GetBUNDLES(GearsFolder.CreateSubdirectory("BMX"), bmxBundles);
-        }
+            //}
 
-        void Start()
-        {
+            GetBUNDLES("Gears", "Inline", BUNDLES_INLINE);
+            GetBUNDLES("Gears", "Skateboard", BUNDLES_SKATEBOARD);
+            GetBUNDLES("Gears", "BMX", BUNDLES_BMX);
+
+            // GLOM GetBUNDLES
+            //GetBUNDLES(GEARFOLDER.CreateSubdirectory("Gears/Inline"), BUNDLES_INLINE);
+            //GetBUNDLES(GEARFOLDER.CreateSubdirectory("Gears/Skateboard"), BUNDLES_SKATEBOARD);
+            //GetBUNDLES(GEARFOLDER.CreateSubdirectory("Gears/BMX"), BUNDLES_BMX);
         }
 
         void LateUpdate() {
             // Checker
-            var worldHandler = WorldHandler.instance?.enabled;
+            var worldHandler = WorldHandler.instance?.currentPlayer;
             if (worldHandler != null && !CHECK) {
-                GetPLAYER();
-                GetOBJECTS(PLAYER.transform.GetChild(0));
-                log("References have been collected !");
-                StartCoroutine("SetASSETS");
-
                 CHECK = true;
+
+                // Get All References
+                PLAYER = WorldHandler.instance?.currentPlayer.gameObject;
+                
+                GetREFERENCES(PLAYER.transform);
+                log("References have been collected !");
+
+                // Apply the new Assets
+                StartCoroutine("InitAssets");
             }
 
             if (worldHandler == null) {
-                inlineReferences.Clear();
-                skateboardReferences.Clear();
-                bmxReferences.Clear();
                 CHECK = false;
+
+                // Reset
+                REFS_INLINE.Clear();
+                REFS_SKATEBOARD.Clear();
+                REFS_BMX.Clear();
             }
         }
 
         void Update() {
+            var worldHandler = WorldHandler.instance?.currentPlayer;
+            if (worldHandler) {
+                CURRENTMOVESTYLE = WorldHandler.instance.currentPlayer.moveStyle;
+            }
+
             // Inputs
-            if (Input.GetKeyDown(KeyCode.PageUp)) {
-                GEAR_CUSTOM_INDEX = Mathf.Clamp(GEAR_CUSTOM_INDEX + 1, 0, 2);
-                SetGear(skateboardBundles, skateboardReferences, GEAR_CUSTOM_INDEX); // NOTE: I need to swap on the current Movestyle used !
+            if (Input.GetKeyDown(KeyCode.PageUp))
+                GearParser(+1);
+
+            if (Input.GetKeyDown(KeyCode.PageDown))
+                GearParser(-1);
+        }
+
+        void GearParser(int add) {
+            if (CURRENTMOVESTYLE == MoveStyle.INLINE) {
+                INDEX_INLINE = Mathf.Clamp(INDEX_INLINE + add, 0, BUNDLES_INLINE.Count - 1);
+                if (BUNDLES_INLINE.Count > 0)
+                    SetInline(INDEX_INLINE);
             }
 
-            if (Input.GetKeyDown(KeyCode.PageDown)) {
-                GEAR_CUSTOM_INDEX = Mathf.Clamp(GEAR_CUSTOM_INDEX - 1, 0, 2);
-                SetGear(skateboardBundles, skateboardReferences, GEAR_CUSTOM_INDEX);
+            if (CURRENTMOVESTYLE == MoveStyle.SKATEBOARD) {
+                INDEX_SKATEBOARD = Mathf.Clamp(INDEX_SKATEBOARD + add, 0, BUNDLES_SKATEBOARD.Count - 1);
+                if (BUNDLES_SKATEBOARD.Count > 0)
+                    SetSkateboard(INDEX_SKATEBOARD);
+            }
+
+            if (CURRENTMOVESTYLE == MoveStyle.BMX) {
+                INDEX_BMX = Mathf.Clamp(INDEX_BMX + add, 0, BUNDLES_BMX.Count - 1);
+                if (BUNDLES_BMX.Count > 0)
+                    SetBMX(INDEX_BMX);
             }
         }
 
-        void GetBUNDLES(DirectoryInfo bundleDir, List<AssetBundle> bundlesList) {
-            FileInfo[] pathsList = bundleDir.GetFiles("*", SearchOption.AllDirectories);
+        void GetBUNDLES(string parentFolder, string childFolder, List<AssetBundle> bundlesList) {
+            string[] pathsList = Directory.GetFiles(Application.dataPath + "/../" + $"/ModdingFolder/{parentFolder}/{childFolder}", "*", SearchOption.AllDirectories);
 
-            foreach (FileInfo path in pathsList) {
-                AssetBundle bundle = AssetBundle.LoadFromFile(path.FullName);
-                bundlesList.Add(bundle);
-                log($"<b>{bundle.name}</b> bundle loaded !");
+            foreach (string path in pathsList)
+                bundlesList.Add(AssetBundle.LoadFromFile(path));
+
+            // Log
+            string _names = "";
+            for (int i = 0; i < bundlesList.Count; i++) {
+                _names += "\n" + bundlesList[i].name;
             }
+            log($"{bundlesList.Count} {childFolder}(s) loaded ! <color=grey>{_names}</color>");
         }
 
-        void GetPLAYER() {
-            //PLAYER = GameObject.Find("Player_HUMAN0");
-            PLAYER = WorldHandler.instance?.currentPlayer.gameObject;
-            log("Player_HUMAN0 is referenced !");
-        }
+        // GLOM GetBUNDLES()
+        //void GetBUNDLES(DirectoryInfo bundleDir, List<AssetBundle> bundlesList) {
+        //    FileInfo[] pathsList = bundleDir.GetFiles("*", SearchOption.AllDirectories);
 
-        void GetOBJECTS(Transform parent, int level = 0) { // Recursive Search Function
+        //    foreach (FileInfo path in pathsList) {
+        //        AssetBundle bundle = AssetBundle.LoadFromFile(path.FullName);
+        //        bundlesList.Add(bundle);
+        //        log($"<b>{bundle.name}</b> bundle loaded !");
+        //    }
+        //}
+
+        void GetREFERENCES(Transform parent, int level = 0) { // Recursive Search Function
+            // Get Characters and Gears
             foreach (Transform child in parent) {
                 // Characters
-                foreach(Characters character in characterNamesMap.Keys)
-                {
-                    if (child.name == character + "(Clone)")
-                        charReference[character] = child.Find("mesh").gameObject;
-                }
+                //foreach (Characters character in characterNamesMap.Keys) {
+                //    if (child.name == character + "(Clone)")
+                //        REFS_CHARACTER[character] = child.Find("mesh").gameObject;
+                //}
 
-                // Movestyles
-                if (child.name == "skateLeft(Clone)")
-                    inlineReferences.Add(child.gameObject);
-
-                if (child.name == "skateRight(Clone)")
-                    inlineReferences.Add(child.gameObject);
+                // Gears
+                if (child.name == "skateLeft(Clone)" || child.name == "skateRight(Clone)")
+                    REFS_INLINE.Add(child.gameObject);
 
                 if (child.name == "skateboard(Clone)")
-                    skateboardReferences.Add(child.gameObject);
+                    REFS_SKATEBOARD.Add(child.gameObject);
 
-                if (child.name == "bmxFrame(Clone)")
-                    bmxReferences.Add(child.gameObject);
+                if (child.name == "BmxFrame(Clone)" ||
+                    child.name == "BmxGear(Clone)" ||
+                    child.name == "BmxHandlebars(Clone)" ||
+                    child.name == "BmxPedalL(Clone)" ||
+                    child.name == "BmxPedalR(Clone)" ||
+                    child.name == "BmxWheelF(Clone)" ||
+                    child.name == "BmxWheelR(Clone)")
+                    REFS_BMX.Add(child.gameObject);
 
                 // Process next deeper level
-                GetOBJECTS(child, level + 1);
+                GetREFERENCES(child, level + 1);
             }
         }
 
-        IEnumerator SetASSETS() {
+        IEnumerator InitAssets() {
             yield return new WaitForSeconds(0.1f); // Workaround, I'm waiting for lists to be complete
 
-            // Characters
-            foreach (Characters character in characterNamesMap.Keys)
-            {
-                if (charBundles[character].Count > 0)
-                    SetCharacter(character, charBundles[character], charReference[character], 0);
-            }
+            //// Characters
+            //foreach (Characters character in characterNamesMap.Keys) {
+            //    if (BUNDLES_CHARACTER[character].Count > 0) {
+            //        //SetCharacter(character, BUNDLES_CHARACTER[character], REFS_CHARACTER[character], 0);
+            //    }
+            //}
 
             // Gears
-            if (inlineBundles.Count > 0)
-                SetGear(inlineBundles, inlineReferences, 0);
+            if (BUNDLES_INLINE.Count > 0)
+                SetInline(0);
 
-            if (skateboardBundles.Count > 0)
-                SetGear(skateboardBundles, skateboardReferences, 0);
+            if (BUNDLES_SKATEBOARD.Count > 0)
+                SetSkateboard(0);
 
-            if (bmxBundles.Count > 0)
-                SetGear(bmxBundles, bmxReferences, 0);
+            if (BUNDLES_BMX.Count > 0)
+                SetBMX(0);
         }
 
-        GameObject plop = new GameObject();
+        //GameObject plop = new GameObject();
         void SetCharacter(Characters character, List<AssetBundle> bundlesList, GameObject reference, int index) {
             // Replace Character with the new Character
-            
-            Instantiate(plop);
-            plop.transform.parent = PLAYER.transform;
-            plop.AddComponent<SkinnedMeshRenderer>();
-            string fbxName = characterNamesMap[character].ToLower() + ".fbx";
-            plop.GetComponent<SkinnedMeshRenderer>().sharedMesh = bundlesList[index].LoadAsset<Mesh>(fbxName);
 
-            reference.transform.GetComponent<SkinnedMeshRenderer>().sharedMesh = plop.GetComponent<SkinnedMeshRenderer>().sharedMesh;
+            //// Test
+            //Instantiate(plop);
+            //plop.transform.parent = PLAYER.transform;
+            //plop.AddComponent<SkinnedMeshRenderer>();
+            //string fbxName = characterNamesMap[character].ToLower() + ".fbx";
+            //plop.GetComponent<SkinnedMeshRenderer>().sharedMesh = bundlesList[index].LoadAsset<Mesh>(fbxName);
 
-            log($"Load: {bundlesList[index].name}");
-        }
-
-        void SetGear(List<AssetBundle> bundlesList, List<GameObject> references, int index) {
-            // Load the first Asset (Mesh Type for now)
-            Mesh _mesh = bundlesList[index].LoadAsset<Mesh>(bundlesList[index].GetAllAssetNames()[0]); 
-
-            // Replace MoveStyle asset by the new MoveStyle Asset
-            for (int i = 0; i < references.Count; i++) {
-                // Mesh
-                references[i].transform.GetComponent<MeshFilter>().mesh = _mesh;
-
-                // White Particle Spawning Mesh (IMPORTANT: Mesh need to have Read/Write enable in the Import Settings of Unity)
-                if (references[i].transform.childCount > 0) {
-                    references[i].transform.GetChild(0).GetComponent<ParticleSystemRenderer>().mesh = _mesh;
-                }
-            }
+            //reference.transform.GetComponent<SkinnedMeshRenderer>().sharedMesh = plop.GetComponent<SkinnedMeshRenderer>().sharedMesh;
 
             log($"Load: {bundlesList[index].name}");
         }
 
-        public Dictionary<Characters, string> characterNamesMap = new Dictionary<Characters, string>()
-        {
+        void SetInline(int index) {
+            foreach (GameObject reference in REFS_INLINE)
+                reference.GetComponent<MeshFilter>().mesh = BUNDLES_INLINE[index].LoadAsset<Mesh>(reference.name + ".fbx");
+
+            log($"Load: {BUNDLES_INLINE[index].name}");
+
+            //    //// White Particle Spawning Mesh (IMPORTANT: Mesh need to have Read/Write enable in the Import Settings of Unity)
+            //    //if (REFS_INLINE[i].transform.childCount > 0) {
+            //    //    REFS_INLINE[i].transform.GetChild(0).GetComponent<ParticleSystemRenderer>().mesh = _mesh;
+            //    //}
+        }
+
+        void SetSkateboard(int index) {
+            foreach (GameObject reference in REFS_SKATEBOARD)
+                reference.GetComponent<MeshFilter>().mesh = BUNDLES_SKATEBOARD[index].LoadAsset<Mesh>(reference.name + ".fbx");
+
+            log($"Load: {BUNDLES_SKATEBOARD[index].name}");
+        }
+
+        void SetBMX(int index) {
+            foreach (GameObject reference in REFS_BMX)
+                reference.GetComponent<MeshFilter>().mesh = BUNDLES_BMX[index].LoadAsset<Mesh>(reference.name + ".fbx");
+
+            log($"Load: {BUNDLES_BMX[index].name}");
+        }
+
+        public Dictionary<Characters, string> characterNamesMap = new Dictionary<Characters, string>() {
+            // Added by Characters.list order
+            [Characters.girl1] = "Vinyl",
+            [Characters.frank] = "Frank",
+            [Characters.ringdude] = "Coil",
             [Characters.metalHead] = "Red",
-            [Characters.angel] = "Rave"
-            //TODO To complete
+            [Characters.blockGuy] = "Tryce",
+            [Characters.spaceGirl] = "Bel",
+            [Characters.angel] = "Rave",
+            [Characters.eightBall] = "DOT EXE",
+            [Characters.dummy] = "Solace",
+            [Characters.dj] = "DJ Cyber",
+            [Characters.medusa] = "Eclipse",
+            [Characters.boarder] = "DevilTheory",
+            [Characters.headMan] = "Faux", // Necessary ?
+            [Characters.prince] = "Flesh Prince",
+            [Characters.jetpackBossPlayer] = "Irene Ritvield",
+            [Characters.legendFace] = "Felix",
+            [Characters.oldheadPlayer] = "Oldhead",
+            [Characters.robot] = "Base",
+            [Characters.skate] = "Jay",
+            [Characters.wideKid] = "Mesh",
+            [Characters.futureGirl] = "Futurism",
+            [Characters.pufferGirl] = "Rise",
+            [Characters.bunGirl] = "Shine",
+            [Characters.headManNoJetpack] = "Faux (Prelude)", // Necessary ?
+            [Characters.eightBallBoss] = "DOT EXE (Boss)", // Necessary ?
+            [Characters.legendMetalHead] = "Red Felix (Dream)", // Necessary ?
         };
 
-        public string CharacterToString(Characters character)
-        {
-            if (characterNamesMap.ContainsKey(character))
-            {
+        public string CharacterToString(Characters character) {
+            if (characterNamesMap.ContainsKey(character)) {
                 return characterNamesMap[character];
             }
             return character.ToString();
