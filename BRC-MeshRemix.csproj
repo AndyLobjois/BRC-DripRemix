@@ -33,6 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CharacterRemix.cs" />
     <Compile Include="MeshRemixInfos.cs" />
     <Compile Include="MeshRemix.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
