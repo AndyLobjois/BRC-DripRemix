@@ -11,6 +11,13 @@ using Reptile;
 using BRCML;
 using BRCML.Utils;
 
+// TODO:
+// - Figure out Character swapping
+// - Configurable shortcuts (PageUp, PageDown)
+// - ModdingFolder configuration doesn't work for me, help me Glom ! :D
+// - PLAYER reference recover from itself after destroy
+// - Detect Texture
+
 namespace MeshRemix {
 
     [BepInPlugin(MeshRemixInfos.PLUGIN_ID, MeshRemixInfos.PLUGIN_NAME, MeshRemixInfos.PLUGIN_VERSION)]
@@ -85,8 +92,8 @@ namespace MeshRemix {
 
         void LateUpdate() {
             // Checker
-            var worldHandler = WorldHandler.instance?.currentPlayer;
-            if (worldHandler != null && !CHECK) {
+            var PlayerHandler = WorldHandler.instance?.currentPlayer;
+            if (PlayerHandler != null && !CHECK) {
                 CHECK = true;
 
                 // Get All References
@@ -99,7 +106,7 @@ namespace MeshRemix {
                 StartCoroutine("InitAssets");
             }
 
-            if (worldHandler == null) {
+            if (PlayerHandler == null) {
                 CHECK = false;
 
                 // Reset
@@ -127,19 +134,19 @@ namespace MeshRemix {
             if (CURRENTMOVESTYLE == MoveStyle.INLINE) {
                 INDEX_INLINE = Mathf.Clamp(INDEX_INLINE + add, 0, BUNDLES_INLINE.Count - 1);
                 if (BUNDLES_INLINE.Count > 0)
-                    SetInline(INDEX_INLINE);
+                    SetGear(REFS_INLINE, BUNDLES_INLINE, INDEX_INLINE);
             }
 
             if (CURRENTMOVESTYLE == MoveStyle.SKATEBOARD) {
                 INDEX_SKATEBOARD = Mathf.Clamp(INDEX_SKATEBOARD + add, 0, BUNDLES_SKATEBOARD.Count - 1);
                 if (BUNDLES_SKATEBOARD.Count > 0)
-                    SetSkateboard(INDEX_SKATEBOARD);
+                    SetGear(REFS_SKATEBOARD, BUNDLES_SKATEBOARD, INDEX_SKATEBOARD);
             }
 
             if (CURRENTMOVESTYLE == MoveStyle.BMX) {
                 INDEX_BMX = Mathf.Clamp(INDEX_BMX + add, 0, BUNDLES_BMX.Count - 1);
                 if (BUNDLES_BMX.Count > 0)
-                    SetBMX(INDEX_BMX);
+                    SetGear(REFS_BMX, BUNDLES_BMX, INDEX_BMX);
             }
         }
 
@@ -169,13 +176,9 @@ namespace MeshRemix {
         //}
 
         void GetREFERENCES(Transform parent, int level = 0) { // Recursive Search Function
-            // Get Characters and Gears
             foreach (Transform child in parent) {
                 // Characters
-                //foreach (Characters character in characterNamesMap.Keys) {
-                //    if (child.name == character + "(Clone)")
-                //        REFS_CHARACTER[character] = child.Find("mesh").gameObject;
-                //}
+                //...
 
                 // Gears
                 if (child.name == "skateLeft(Clone)" || child.name == "skateRight(Clone)")
@@ -201,65 +204,55 @@ namespace MeshRemix {
         IEnumerator InitAssets() {
             yield return new WaitForSeconds(0.1f); // Workaround, I'm waiting for lists to be complete
 
-            //// Characters
-            //foreach (Characters character in characterNamesMap.Keys) {
-            //    if (BUNDLES_CHARACTER[character].Count > 0) {
-            //        //SetCharacter(character, BUNDLES_CHARACTER[character], REFS_CHARACTER[character], 0);
-            //    }
-            //}
-
-            // Gears
+            // Init Gears
             if (BUNDLES_INLINE.Count > 0)
-                SetInline(0);
+                SetGear(REFS_INLINE, BUNDLES_INLINE, 0);
 
             if (BUNDLES_SKATEBOARD.Count > 0)
-                SetSkateboard(0);
+                SetGear(REFS_SKATEBOARD, BUNDLES_SKATEBOARD, 0);
 
             if (BUNDLES_BMX.Count > 0)
-                SetBMX(0);
+                SetGear(REFS_BMX, BUNDLES_BMX, 0);
         }
 
+        void SetGear(List<GameObject> _REFS, List<AssetBundle> _BUNDLES, int index) {
+            foreach (GameObject _ref in _REFS) {
+                Mesh _mesh = _BUNDLES[index].LoadAsset<Mesh>(_ref.name + ".fbx");
+                Mesh _particle = _BUNDLES[index].LoadAsset<Mesh>("particle.fbx");
+                _ref.GetComponent<MeshFilter>().mesh = _mesh;
+
+                if (_ref.name == "skateRight(Clone)" || _ref.name == "skateLeft(Clone)" || _ref.name == "skateboard(Clone)") {
+                    if (_ref.transform.childCount > 0) { // Detect ParticleSystem
+                        _ref.transform.GetChild(0).GetComponent<ParticleSystemRenderer>().mesh = _mesh; //IMPORTANT: Mesh need to have Read/Write enable in the Import Settings of Unity
+                        _ref.transform.GetChild(0).GetComponent<ParticleSystem>().Play();
+                    }
+                } else if (_ref.name == "BmxFrame(Clone)") { // Because BMX is in multiple parts, the particle system use 1 specific merged mesh
+                    if (_ref.transform.childCount > 0) { // Detect ParticleSystem
+                        _ref.transform.GetChild(0).GetComponent<ParticleSystemRenderer>().mesh = _particle; //IMPORTANT: Mesh need to have Read/Write enable in the Import Settings of Unity
+                        _ref.transform.GetChild(0).GetComponent<ParticleSystem>().Play();
+                    }
+                }
+            }
+
+            log($"Load: {_BUNDLES[index].name}");
+        }
+
+        // SetCharacter Test
         //GameObject plop = new GameObject();
-        void SetCharacter(Characters character, List<AssetBundle> bundlesList, GameObject reference, int index) {
-            // Replace Character with the new Character
+        //void SetCharacter(Characters character, List<AssetBundle> bundlesList, GameObject reference, int index) {
+        //    // Replace Character with the new Character
 
-            //// Test
-            //Instantiate(plop);
-            //plop.transform.parent = PLAYER.transform;
-            //plop.AddComponent<SkinnedMeshRenderer>();
-            //string fbxName = characterNamesMap[character].ToLower() + ".fbx";
-            //plop.GetComponent<SkinnedMeshRenderer>().sharedMesh = bundlesList[index].LoadAsset<Mesh>(fbxName);
+        //    // Test
+        //    Instantiate(plop);
+        //    plop.transform.parent = PLAYER.transform;
+        //    plop.AddComponent<SkinnedMeshRenderer>();
+        //    string fbxName = characterNamesMap[character].ToLower() + ".fbx";
+        //    plop.GetComponent<SkinnedMeshRenderer>().sharedMesh = bundlesList[index].LoadAsset<Mesh>(fbxName);
 
-            //reference.transform.GetComponent<SkinnedMeshRenderer>().sharedMesh = plop.GetComponent<SkinnedMeshRenderer>().sharedMesh;
+        //    reference.transform.GetComponent<SkinnedMeshRenderer>().sharedMesh = plop.GetComponent<SkinnedMeshRenderer>().sharedMesh;
 
-            log($"Load: {bundlesList[index].name}");
-        }
-
-        void SetInline(int index) {
-            foreach (GameObject reference in REFS_INLINE)
-                reference.GetComponent<MeshFilter>().mesh = BUNDLES_INLINE[index].LoadAsset<Mesh>(reference.name + ".fbx");
-
-            log($"Load: {BUNDLES_INLINE[index].name}");
-
-            //    //// White Particle Spawning Mesh (IMPORTANT: Mesh need to have Read/Write enable in the Import Settings of Unity)
-            //    //if (REFS_INLINE[i].transform.childCount > 0) {
-            //    //    REFS_INLINE[i].transform.GetChild(0).GetComponent<ParticleSystemRenderer>().mesh = _mesh;
-            //    //}
-        }
-
-        void SetSkateboard(int index) {
-            foreach (GameObject reference in REFS_SKATEBOARD)
-                reference.GetComponent<MeshFilter>().mesh = BUNDLES_SKATEBOARD[index].LoadAsset<Mesh>(reference.name + ".fbx");
-
-            log($"Load: {BUNDLES_SKATEBOARD[index].name}");
-        }
-
-        void SetBMX(int index) {
-            foreach (GameObject reference in REFS_BMX)
-                reference.GetComponent<MeshFilter>().mesh = BUNDLES_BMX[index].LoadAsset<Mesh>(reference.name + ".fbx");
-
-            log($"Load: {BUNDLES_BMX[index].name}");
-        }
+        //    log($"Load: {bundlesList[index].name}");
+        //}
 
         public Dictionary<Characters, string> characterNamesMap = new Dictionary<Characters, string>() {
             // Added by Characters.list order
