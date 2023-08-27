@@ -1,13 +1,8 @@
-﻿using System;
-using System.IO;
-using System.Collections;
+﻿using System.IO;
 using System.Collections.Generic;
-using BepInEx;
-using BepInEx.Logging;
-using BepInEx.Configuration;
-using HarmonyLib;
 using UnityEngine;
 using Reptile;
+using BepInEx.Configuration;
 
 namespace MeshRemix
 {
@@ -15,7 +10,8 @@ namespace MeshRemix
     {
         public MoveStyle moveStyle;
         public string MoveStyleName => moveStyle.ToString().ToLower().FirstCharToUpper();
-        public int index = 0;
+        public ConfigEntry<int> indexConfig;
+        public int Index { get { return indexConfig.Value; } set { indexConfig.Value = value; } }
         public List<AssetBundle> bundles = new List<AssetBundle>();
         public List<GameObject> refs = new List<GameObject>();
         public Texture texRef;
@@ -24,6 +20,7 @@ namespace MeshRemix
         
         public GearHandler(MoveStyle moveStyle)
         {
+            indexConfig = MeshRemix.Instance.Config.Bind<int>("General", $"{MoveStyleName}_Index", 0);
             this.moveStyle = moveStyle;
         }
 
@@ -38,6 +35,9 @@ namespace MeshRemix
             FileInfo[] pathsList = MeshRemix.GEARFOLDER.CreateSubdirectory(MoveStyleName).GetFiles("*", SearchOption.AllDirectories);
             foreach (FileInfo path in pathsList)
                 bundles.Add(AssetBundle.LoadFromFile(path.FullName));
+
+
+            Index = Mathf.Clamp(Index, 0, bundles.Count - 1);
 
             // Log
             string _names = "";
@@ -66,7 +66,7 @@ namespace MeshRemix
         {
             if (bundles.Count > 0)
             {
-                index = Mathf.Clamp(index + add, 0, bundles.Count - 1);
+                Index = Mathf.Clamp(Index + add, 0, bundles.Count - 1);
                 Swap();
             }
         }
@@ -76,11 +76,11 @@ namespace MeshRemix
             foreach (GameObject _ref in refs)
             {
                 // Mesh
-                Mesh _mesh = bundles[index].LoadAsset<Mesh>(_ref.name + ".fbx");
+                Mesh _mesh = bundles[Index].LoadAsset<Mesh>(_ref.name + ".fbx");
                 _ref.GetComponent<MeshFilter>().mesh = _mesh;
 
                 // Particle
-                Mesh _particle = bundles[index].LoadAsset<Mesh>("particle.fbx");
+                Mesh _particle = bundles[Index].LoadAsset<Mesh>("particle.fbx");
                 if (_ref.name == "skateRight(Clone)" || _ref.name == "skateLeft(Clone)" || _ref.name == "skateboard(Clone)")
                 {
                     if (_ref.transform.childCount > 0)
@@ -100,7 +100,7 @@ namespace MeshRemix
 
                 // Texture (Could be better !)
                 MeshRenderer _renderer = _ref.GetComponent<MeshRenderer>();
-                Texture _tex = bundles[index].LoadAsset<Texture2D>("tex.png");
+                Texture _tex = bundles[Index].LoadAsset<Texture2D>("tex.png");
                 if (_tex != null)
                 {
                     _renderer.material.mainTexture = _tex;
@@ -117,7 +117,7 @@ namespace MeshRemix
 
             }
 
-            MeshRemix.log($"Load: {bundles[index].name}");
+            MeshRemix.log($"Load: {bundles[Index].name}");
         }
     }
 }

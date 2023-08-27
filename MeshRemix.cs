@@ -1,18 +1,14 @@
 ﻿using System;
 using System.IO;
-using System.Collections;
 using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Configuration;
-using HarmonyLib;
 using UnityEngine;
 using Reptile;
 
 // TODO:
 // - Figure out Character swapping
-// - Configurable shortcuts (PageUp, PageDown)
-// - Save File for current indexes (Inside the config files ?)
 
 namespace MeshRemix {
 
