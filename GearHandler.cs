@@ -64,9 +64,11 @@ namespace MeshRemix
 
         public void SetGear(int add)
         {
-            index = Mathf.Clamp(index + add, 0, bundles.Count - 1);
             if (bundles.Count > 0)
+            {
+                index = Mathf.Clamp(index + add, 0, bundles.Count - 1);
                 Swap();
+            }
         }
 
         void Swap()

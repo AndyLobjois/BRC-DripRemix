@@ -63,18 +63,9 @@ namespace MeshRemix {
 
                     // Get All References
                     PLAYER = WorldHandler.instance?.currentPlayer.gameObject;
-                    log("Player have been found  !");
+                    log("Player has been found!");
 
-                    // Clear References
-                    foreach (GearHandler gh in GEARS.Values)
-                    {
-                        gh.ClearRefs();
-                    }
-                    GetReferences(PLAYER.transform);
-                    log("References have been collected !");
-
-                    // Apply the new Assets
-                    SetGear(0);
+                    ReloadRefs();
                 }
             }
         }
@@ -96,9 +87,21 @@ namespace MeshRemix {
             foreach (GearHandler gh in GEARS.Values)
             {
                 gh.GetBundles();
+            }
+            ReloadRefs();
+        }
+
+        void ReloadRefs()
+        {
+            // Clear References
+            foreach (GearHandler gh in GEARS.Values)
+            {
                 gh.ClearRefs();
             }
             GetReferences(PLAYER.transform);
+            log("References have been collected !");
+
+            // Apply the new Assets
             SetGear(0);
         }
 
