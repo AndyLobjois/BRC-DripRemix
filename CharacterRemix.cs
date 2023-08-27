@@ -8,8 +8,6 @@ using BepInEx.Configuration;
 using HarmonyLib;
 using UnityEngine;
 using Reptile;
-using BRCML;
-using BRCML.Utils;
 
 // Character Swap WIP, not used yet
 // Code from Glomzubuk
