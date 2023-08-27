@@ -1,4 +1,4 @@
-<p align="center"><img src="RESOURCES/img/icon.png" width="100"></p>
+<img src="RESOURCES/img/icon.png" width="256">
 
 # BRC-MeshRemix
 
@@ -30,34 +30,45 @@
 
 # HOW TO CREATE BUNDLES
 
-1. Create a **New Project** with [**Unity 2021.3.27f**](https://unity.com/releases/editor/whats-new/2021.3.27)
-<p align="center"><img src="RESOURCES/img/meshremix_unityhub.jpg" width="400"></p>
+### 1. Create a **New Project** with [**Unity 2021.3.27f**](https://unity.com/releases/editor/whats-new/2021.3.27)
+<p align="center"><img src="RESOURCES/img/meshremix_unityhub.jpg"></p>
 
-2. Drop [**MeshRemix.unitypackage**](RESOURCES/MeshRemix.unitypackage) into **Unity** and import all assets from the package
-<p align="center"><img src="RESOURCES/img/meshremix_gif_droppackage.gif" width="400"></p>
+### 2. Drop [**MeshRemix.unitypackage**](RESOURCES/MeshRemix.unitypackage) into **Unity** and import all assets from the package
+<p align="center"><img src="RESOURCES/img/meshremix_gif_droppackage.gif"></p>
 
-3. Open **Default Gears.blend** from [**Models.zip**](RESOURCES/Models.zip) and make your edits (for non-Blender users, there is .fbx files inside the archive)
-   - Make sure to have only **1 material** (except the BMX wheels)
-    - Make sure to have only **1 UV map** named **UV0**
-    - **Shade Smooth** the whole object (3D View > Object > Shade Smooth), it will prevent the **Outlines to "break" at the corners**
-    - **Don't change the Rotation or Scale** of the object, every changes need to happen **inside** the object (Edit Mode)
+### 3. Open **Default Gears.blend** from [**Models.zip**](RESOURCES/Models.zip) and make your edits (for non-Blender users, there is .fbx files inside the archive)
 
-4. **Export each edited mesh (FBX)** inside the Unity project, **over the corresponding FBX files** _(IMPORTANT: Don't rename the FBX files !)_
-<p align="center"><img src="RESOURCES/img/meshremix_export1.jpg" width="250"> <img src="RESOURCES/img/meshremix_export2.jpg" width="250"></p>
+> • Make sure to have only **1 material** (except the BMX wheels)
+> 
+> • Make sure to have only **1 UV map** named **UV0**
+> 
+> • **Shade Smooth** the whole object (3D View > Object > Shade Smooth), it will prevent the **Outlines to "break" at the corners**
+> 
+> • **Don't change the Rotation or Scale** of the object, every changes need to happen **inside** the object (Edit Mode)
 
-5. If you have a **texture**, put the texture aside the mesh(s) and name it `tex.png`
-<p align="center"><img src="RESOURCES/img/meshremix_texture.jpg" width="400"></p>
 
-6. **Assign a new assetbundle "tag"** to all your assets
-    - It's **important** to make a **unique Bundle Name Tag** because it will reduce the chances someone else put the same ! (Conflict !)
-    - Add the "format" for organization purpose (.inline/ .skateboard / .bmx)
-      ### Example: *“mycustombmx_andyhellgrim.bmx”*
+
+### 4. **Export each edited mesh (FBX)** inside the Unity project, **over the corresponding FBX files**
+<p align="center">⚠️ <b>PLEASE DON'T RENAME THE FBX FILES</b> ! ⚠️</p>
+<p align="center"><img src="RESOURCES/img/meshremix_export1.jpg"></p>
+<p align="center"><img src="RESOURCES/img/meshremix_export2.jpg"></p>
+
+### 5. If you have a **texture**, put the texture aside the mesh(s) and name it `tex.png`
+<p align="center"><img src="RESOURCES/img/meshremix_texture.jpg"></p>
+
+### 6. **Assign a new AssetBundle "Tag"** to all your assets
+
+> It's **important** to make a **Unique AssetBundle Name Tag** because it will reduce the chances someone else put the same ! (Conflict !)
+>
+> Add the "format" for organization purpose (.inline/ .skateboard / .bmx)
+
+<p align="center"><b><i>Example: “mycustombmx_andyhellgrim.bmx”</i></b></p>
 <p align="center"><img src="RESOURCES/img/meshremix_gif_renamebundle.gif"></p>
 
-7. **Build** the bundle(s) with **File > Build AssetBundles**
+### 7. **Build** the bundle(s) with **File > Build AssetBundles**
 <p align="center"><img src="RESOURCES/img/meshremix_gif_unitybundle.gif"></p>
 
-- Congratulation, you have your bundle(s) !
+Congratulation, you have your bundle(s) !
 
 # CREDITS
 
