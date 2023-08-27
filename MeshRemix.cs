@@ -25,8 +25,9 @@ namespace MeshRemix {
         internal static DirectoryInfo GEARFOLDER = ModdingFolder.CreateSubdirectory("Gears");
         internal static ManualLogSource Log { get; private set; }
 
-        internal ConfigEntry<KeyCode> switchGearUp;
-        internal ConfigEntry<KeyCode> switchGearDown;
+        internal ConfigEntry<KeyCode> switchGearUpKey;
+        internal ConfigEntry<KeyCode> switchGearDownKey;
+        internal ConfigEntry<KeyCode> reloadGearKey;
 
         // CORE
         public int HASH;
@@ -39,8 +40,9 @@ namespace MeshRemix {
             Instance = this;
             Log = this.Logger;
             log("MeshRemix is loaded !");
-            switchGearUp = Config.Bind("Keybinds", "SwitchModelUp", KeyCode.PageUp);
-            switchGearDown = Config.Bind("Keybinds", "SwitchModelDown", KeyCode.PageDown);
+            switchGearUpKey = Config.Bind("Keybinds", "SwitchModelUp", KeyCode.PageUp);
+            switchGearDownKey = Config.Bind("Keybinds", "SwitchModelDown", KeyCode.PageDown);
+            reloadGearKey = Config.Bind("Keybinds", "ReloadGear", KeyCode.F8);
 
             GEARS.Add(MoveStyle.INLINE, new GearHandler(MoveStyle.INLINE));
             GEARS.Add(MoveStyle.SKATEBOARD, new GearHandler(MoveStyle.SKATEBOARD));
@@ -79,11 +81,25 @@ namespace MeshRemix {
 
         void Update() {
             // Inputs
-            if (Input.GetKeyDown(switchGearUp.Value))
+            if (Input.GetKeyDown(switchGearUpKey.Value))
                 SetGear(-1);
 
-            if (Input.GetKeyDown(switchGearDown.Value))
+            if (Input.GetKeyDown(switchGearDownKey.Value))
                 SetGear(+1);
+
+            if (Input.GetKeyDown(reloadGearKey.Value))
+                ReloadGear();
+        }
+
+        void ReloadGear()
+        {
+            foreach (GearHandler gh in GEARS.Values)
+            {
+                gh.GetBundles();
+                gh.ClearRefs();
+            }
+            GetReferences(PLAYER.transform);
+            SetGear(0);
         }
 
         void GetReferences(Transform parent, int level = 0) { // Recursive Search Function

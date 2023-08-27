@@ -30,6 +30,10 @@ namespace MeshRemix
 
         public void GetBundles()
         {
+            foreach(AssetBundle b in bundles)
+            {
+                b.Unload(true);
+            }
             this.bundles.Clear();
             FileInfo[] pathsList = MeshRemix.GEARFOLDER.CreateSubdirectory(MoveStyleName).GetFiles("*", SearchOption.AllDirectories);
             foreach (FileInfo path in pathsList)
@@ -91,21 +95,24 @@ namespace MeshRemix
                         _ref.transform.GetChild(0).GetComponent<ParticleSystem>().Play();
                     }
                 }
-                /*
+
                 // Texture (Could be better !)
                 MeshRenderer _renderer = _ref.GetComponent<MeshRenderer>();
-                Texture _tex = _BUNDLES[index].LoadAsset<Texture2D>("tex.png");
-                if (_tex != null) {
+                Texture _tex = bundles[index].LoadAsset<Texture2D>("tex.png");
+                if (_tex != null)
+                {
                     _renderer.material.mainTexture = _tex;
-                } else {
-                    if (CURRENTGEAR == MoveStyle.INLINE)
+                }
+                else
+                {
+                    if (moveStyle == MoveStyle.INLINE)
                         _renderer.material.mainTexture = WorldHandler.instance.currentPlayer.MoveStylePropsPrefabs.skateL.GetComponent<MeshRenderer>().material.mainTexture;
-                    if (CURRENTGEAR == MoveStyle.SKATEBOARD)
+                    if (moveStyle == MoveStyle.SKATEBOARD)
                         _renderer.material.mainTexture = WorldHandler.instance.currentPlayer.MoveStylePropsPrefabs.skateboard.GetComponent<MeshRenderer>().material.mainTexture;
-                    if (CURRENTGEAR == MoveStyle.BMX)
+                    if (moveStyle == MoveStyle.BMX)
                         _renderer.material.mainTexture = WorldHandler.instance.currentPlayer.MoveStylePropsPrefabs.bmxFrame.GetComponent<MeshRenderer>().material.mainTexture;
                 }
-                */
+
             }
 
             MeshRemix.log($"Load: {bundles[index].name}");
