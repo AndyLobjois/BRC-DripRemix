@@ -10,13 +10,13 @@
 
 ### R2ModManager
 
-- Install [**R2ModManager**](https://lethal-league-blaze.thunderstore.io/package/ebkr/r2modman/) and download [**BRC-MeshRemix**](https://lethal-league-blaze.thunderstore.io/c/bomb-rush-cyberfunk/p/AndyLobjois/MeshRemix/) with the dependencies.
+- Install [**R2ModManager**](https://lethal-league-blaze.thunderstore.io/package/ebkr/r2modman/) and download [**BRC-MeshRemix**](https://lethal-league-blaze.thunderstore.io/c/bomb-rush-cyberfunk/p/AndyLobjois/MeshRemix/)
 - Launch the game at least once for auto-configuration
 
 ### Manually
 
 - Install [**BepInEx**](https://docs.bepinex.dev/articles/user_guide/installation/index.html)
-- Download [**BRC-MeshRemix**](https://lethal-league-blaze.thunderstore.io/c/bomb-rush-cyberfunk/p/AndyLobjois/MeshRemix/) (”Manual Download” button) from Thunderstore
+- Download [**BRC-MeshRemix**](https://lethal-league-blaze.thunderstore.io/c/bomb-rush-cyberfunk/p/AndyLobjois/MeshRemix/) (”Manual Download” button) from Thunderstore with [**BRCModdingLib**](https://lethal-league-blaze.thunderstore.io/c/bomb-rush-cyberfunk/p/Glomzubuk/BRCModdingLib/) dependency
 - Unzip **BRC-MeshRemix.zip** into the **BepInEx Plugins folder**
 - Launch the game at least once for auto-configuration
 
