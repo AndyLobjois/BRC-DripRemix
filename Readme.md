@@ -12,7 +12,11 @@ Check the [Thunderstore page](https://lethal-league-blaze.thunderstore.io/c/bomb
 - Download [Models.zip](https://github.com/AndyLobjois/BRC-DripRemix/blob/main/RESOURCES/Models.zip)
 - Edit the `.blend` of your choice
 - Duplicate a folder as a template (I recommand my [examples.zip](https://github.com/AndyLobjois/BRC-DripRemix/blob/main/RESOURCES/Examples.zip))
-- Export in `.obj` and overwrite the corresponding files **(Don't rename it !)**
+- Export each **parts** in `.obj` format and overwrite the corresponding files **(Don't rename it !)**
+   - Export settings:
+      - `Selected Only : True`
+      - `Forward Axis : +Z`
+   - Remove the `.mtl` files
 - Edit the `info.txt` and put the name/author
 - Add as many textures as you want (You can rename them for giving a specific order)
 - It's done ! You can launch the game and see from your own eyes !
