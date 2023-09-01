@@ -2,34 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Reptile;
-using BepInEx.Configuration;
 
+namespace DripRemix.Handlers {
 
-namespace DripRemix {
-
-    public class CharacterHandler {
+    public class CharacterHandler : DripHandler {
 
         public Characters CHARACTER;
-        
-        //public ConfigEntry<int> indexMeshConfig;
-        public ConfigEntry<int> indexTextureConfig;
-        //public int INDEX_MESH { get { return indexMeshConfig.Value; } set { indexMeshConfig.Value = value; } }
-        public int INDEX_TEXTURE { get { return indexTextureConfig.Value; } set { indexTextureConfig.Value = value; } }
-        public List<AssetFolder> FOLDERS = new List<AssetFolder>();
-        public List<GameObject> REFERENCES = new List<GameObject>();
 
-        public CharacterHandler(Characters character) {
+        public CharacterHandler(Characters character) : base($"{CharacterToString(character)}") {
             this.CHARACTER = character;
-            //indexMeshConfig = Main.Instance?.Config.Bind<int>("Save Index", $"{CharacterToString(CHARACTER)}_Mesh_Index", 0);
-            indexTextureConfig = Main.Instance?.Config.Bind<int>("Save Index", $"{CharacterToString(this.CHARACTER)}_Texture_Index", 0);
+            indexMeshConfig = null;
+            AssetFolder = Main.CharactersFolder.CreateSubdirectory(CharacterToString(CHARACTER));
         }
 
-        public void GetAssets() {
+        override public void GetAssets() {
             // Clean
             FOLDERS.Clear();
 
             // Search & Add
-            DirectoryInfo[] folders = Main.CharactersFolder.CreateSubdirectory(CharacterToString(CHARACTER)).GetDirectories();
+            DirectoryInfo[] folders = AssetFolder.GetDirectories();
             foreach (DirectoryInfo folder in folders) {
                 FileInfo[] files = folder.GetFiles("*", SearchOption.TopDirectoryOnly);
 
@@ -88,7 +79,7 @@ namespace DripRemix {
             }
         }
 
-        public void SetTexture(int add) {
+        override public void SetTexture(int add) {
             // Check if there is at least something to change
             if (FOLDERS.Count > 0) {
 
@@ -103,7 +94,7 @@ namespace DripRemix {
             }
         }
 
-        public string CharacterToString(Characters character) {
+        public static string CharacterToString(Characters character) {
             if (Main.CHARACTERMAPS.ContainsKey(character)) {
                 return Main.CHARACTERMAPS[character];
             }

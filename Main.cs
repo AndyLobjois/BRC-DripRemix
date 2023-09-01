@@ -7,6 +7,7 @@ using BepInEx.Configuration;
 using UnityEngine;
 using Reptile;
 using OBJImporter;
+using DripRemix.Handlers;
 
 namespace DripRemix {
 
@@ -95,7 +96,7 @@ namespace DripRemix {
 
             // Init Folders and Lists
             foreach (KeyValuePair<Characters, string> entry in CHARACTERMAPS) {
-                CharactersFolder.CreateSubdirectory(entry.Value + "/.Default/");
+                CharactersFolder.CreateSubdirectory(Path.Combine(entry.Value, ".Default"));
                 CHARACTERS.Add(entry.Key, new CharacterHandler(entry.Key));
             }
             GEARS.Add(MoveStyle.INLINE, new GearHandler(MoveStyle.INLINE));
@@ -232,7 +233,10 @@ namespace DripRemix {
             PHONES.GetAssets();
             SPRAYCANS.GetAssets();
 
-            ReloadReferences();
+            if (WorldHandler.instance?.currentPlayer != null)
+            {
+                ReloadReferences();
+            }
         }
 
         void ReloadReferences() {
@@ -249,13 +253,10 @@ namespace DripRemix {
             log("References have been collected !");
 
             // Apply the new Assets
-            CHARACTERS[WorldHandler.instance.currentPlayer.character].SetTexture(0);
-            GEARS[WorldHandler.instance.currentPlayer.moveStyleEquipped].SetMesh(0);
-            GEARS[WorldHandler.instance.currentPlayer.moveStyleEquipped].SetTexture(0);
-            PHONES.SetMesh(0);
-            PHONES.SetTexture(0);
-            SPRAYCANS.SetMesh(0);
-            SPRAYCANS.SetTexture(0);
+            CHARACTERS[WorldHandler.instance.currentPlayer.character].Reapply();
+            GEARS[WorldHandler.instance.currentPlayer.moveStyleEquipped].Reapply();
+            PHONES.Reapply();
+            SPRAYCANS.Reapply();
         }
 
         static public void log(string message) {

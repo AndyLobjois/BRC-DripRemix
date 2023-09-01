@@ -1,83 +1,20 @@
-﻿using System.IO;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Reptile;
-using BepInEx.Configuration;
-using OBJImporter;
 
-namespace DripRemix {
+namespace DripRemix.Handlers {
 
-    public class GearHandler {
+    public class GearHandler : DripHandler {
 
         public MoveStyle MOVESTYLE;
         public string movestyleName => MOVESTYLE.ToString().ToLower().FirstCharToUpper();
-        public ConfigEntry<int> indexMeshConfig;
-        public ConfigEntry<int> indexTextureConfig;
-        public int INDEX_MESH { get { return indexMeshConfig.Value; } set { indexMeshConfig.Value = value; } }
-        public int INDEX_TEXTURE { get { return indexTextureConfig.Value; } set { indexTextureConfig.Value = value; } }
-        public List<AssetFolder> FOLDERS = new List<AssetFolder>();
-        public List<GameObject> REFERENCES = new List<GameObject>();
 
-        public GearHandler(MoveStyle moveStyle) {
+        public GearHandler(MoveStyle moveStyle) : base ($"{WorldHandler.instance?.currentPlayer?.character}_{moveStyle}") {
             this.MOVESTYLE = moveStyle;
-            indexMeshConfig = Main.Instance?.Config.Bind<int>("Save Index", $"{WorldHandler.instance?.currentPlayer.character}_{MOVESTYLE}_Mesh_Index", 0);
-            indexTextureConfig = Main.Instance?.Config.Bind<int>("Save Index", $"{WorldHandler.instance?.currentPlayer.character}_{MOVESTYLE}_Texture_Index", 0);
+            AssetFolder = Main.GearsFolder.CreateSubdirectory(movestyleName);
         }
 
-        public void GetAssets() {
-            // Clean
-            FOLDERS.Clear();
-
-            // Search & Add
-            DirectoryInfo[] folders = Main.GearsFolder.CreateSubdirectory(movestyleName).GetDirectories();
-            foreach (DirectoryInfo folder in folders) {
-                FileInfo[] files = folder.GetFiles("*", SearchOption.TopDirectoryOnly);
-
-                string name = "";
-                string author = "";
-                Dictionary<string, Mesh> meshes = new Dictionary<string, Mesh>();
-                List<Texture> textures = new List<Texture>();
-                List<Texture> emissions = new List<Texture>();
-
-                foreach (FileInfo file in files) {
-                    // Info
-                    if (file.Extension == ".txt") {
-                        string[] lines = File.ReadAllLines(file.FullName);
-                        name = lines[0].Split('=')[1];
-                        author = lines[1].Split('=')[1];
-                    }
-
-                    // Meshes
-                    if (file.Extension == ".obj") {
-                        meshes.Add(file.Name.Replace(file.Extension, ""), new OBJLoader().Load(file.FullName));
-                    }
-
-                    // Textures
-                    if (file.Extension == ".png" || file.Extension == ".jpg") {
-                        byte[] bytes = File.ReadAllBytes(file.FullName);
-                        Texture2D img = new Texture2D(2, 2);
-                        img.LoadImage(bytes);
-                        img.name = file.Name;
-
-                        if (file.Name.Contains("_emission")) {
-                            for (int i = 0; i < textures.Count; i++) {
-                                if (textures[i].name == file.Name.Replace("_emission", "")) {
-                                    emissions[i] = img;
-                                }
-                            }
-                        } else {
-                            textures.Add(img);
-                            emissions.Add(Texture2D.blackTexture);
-                        }
-                    }
-                }
-
-                FOLDERS.Add(new AssetFolder(name, author, meshes, textures, emissions));
-            }
-
-            // Index ???? I can't remember why it's needed
-            //INDEX_MESH = Mathf.Clamp(INDEX_MESH, 0, FOLDERS.Count - 1);
-            //INDEX_TEXTURE = Mathf.Clamp(INDEX_TEXTURE, 0, FOLDERS[INDEX_MESH].textures.Count - 1);
+        override public void GetAssets() {
+            base.GetAssets();
 
             // Log
             if (FOLDERS.Count > 0) {
@@ -88,11 +25,11 @@ namespace DripRemix {
             }    
         }
 
-        public void SetMesh(int add) {
+        override public void SetMesh(int indexMod) {
             // Check if there is at least something to change
             if (FOLDERS.Count > 0) {
                 // Add value to the Index
-                INDEX_MESH = Mathf.Clamp(INDEX_MESH + add, 0, FOLDERS.Count - 1);
+                INDEX_MESH = Mathf.Clamp(INDEX_MESH + indexMod, 0, FOLDERS.Count - 1);
 
                 // Prepare the particle mesh before the foreach, if not it doesn't works
                 Mesh particleBuffer;
@@ -123,12 +60,12 @@ namespace DripRemix {
             }
         }
 
-        public void SetTexture(int add) {
+        override public void SetTexture(int indexMod) {
             // Check if there is at least something to change
             if (FOLDERS.Count > 0) {
 
                 // Add value to the Index
-                INDEX_TEXTURE = Mathf.Clamp(INDEX_TEXTURE + add, 0, FOLDERS[INDEX_MESH].textures.Count - 1);
+                INDEX_TEXTURE = Mathf.Clamp(INDEX_TEXTURE + indexMod, 0, FOLDERS[INDEX_MESH].textures.Count - 1);
 
                 // Change every references by the new texture
                 foreach (GameObject _ref in REFERENCES) {

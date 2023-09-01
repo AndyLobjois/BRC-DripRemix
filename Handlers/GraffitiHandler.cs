@@ -1,12 +1,12 @@
-﻿using System.IO;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Reptile;
-using BepInEx.Configuration;
 
-namespace DripRemix {
+namespace DripRemix.Handlers {
 
-    public class GraffitiHandler {
-
+    public class GraffitiHandler : DripHandler
+    {
+        public GraffitiHandler() : base(null)
+        {
+        }
     }
 }
