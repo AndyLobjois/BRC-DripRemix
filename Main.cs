@@ -31,6 +31,10 @@ namespace DripRemix {
         internal ConfigEntry<KeyCode> phoneKey;
         internal ConfigEntry<KeyCode> spraycanKey;
         internal ConfigEntry<KeyCode> reloadKey;
+        internal ConfigEntry<KeyCode> meshUpKey;
+        internal ConfigEntry<KeyCode> meshDownKey;
+        internal ConfigEntry<KeyCode> textureUpKey;
+        internal ConfigEntry<KeyCode> textureDownKey;
 
         // References
         public int HASH;
@@ -79,11 +83,15 @@ namespace DripRemix {
             log($"{Infos.PLUGIN_NAME} {Infos.PLUGIN_VERSION} is loaded !");
 
             // Init Key Inputs
-            characterKey = Config.Bind("Keybinds", "CharacterKey", KeyCode.C);
-            gearKey = Config.Bind("Keybinds", "GearKey", KeyCode.G);
-            phoneKey = Config.Bind("Keybinds", "PhoneKey", KeyCode.P);
-            spraycanKey = Config.Bind("Keybinds", "SpraycanKey", KeyCode.B);
             reloadKey = Config.Bind("Keybinds", "Reload", KeyCode.F5);
+            characterKey = Config.Bind("Keybinds", "CharacterKey", KeyCode.C, ConfigDescription.Empty); // ConfigDescription doesn't seems to work ?
+            gearKey = Config.Bind("Keybinds", "GearKey", KeyCode.G, ConfigDescription.Empty);
+            phoneKey = Config.Bind("Keybinds", "PhoneKey", KeyCode.P, ConfigDescription.Empty);
+            spraycanKey = Config.Bind("Keybinds", "SpraycanKey", KeyCode.B, ConfigDescription.Empty);
+            meshUpKey = Config.Bind("Keybinds", "MeshUP", KeyCode.Home, ConfigDescription.Empty);
+            meshDownKey = Config.Bind("Keybinds", "MeshDOWN", KeyCode.End, ConfigDescription.Empty);
+            textureUpKey = Config.Bind("Keybinds", "TextureUP", KeyCode.PageUp, ConfigDescription.Empty);
+            textureDownKey = Config.Bind("Keybinds", "TextureDOWN", KeyCode.PageDown, ConfigDescription.Empty);
 
             // Init Folders and Lists
             foreach (KeyValuePair<Characters, string> entry in CHARACTERMAPS) {

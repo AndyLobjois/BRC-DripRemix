@@ -12,13 +12,13 @@ namespace DripRemix {
         public ConfigEntry<int> indexMeshConfig;
         public ConfigEntry<int> indexTextureConfig;
         public int INDEX_MESH = 0; //{ get { return indexMeshConfig.Value; } set { indexMeshConfig.Value = value; } }
-        public int INDEX_TEXTURE = 0; /*{ get { return indexTextureConfig.Value; } set { indexTextureConfig.Value = value; } }*/
+        public int INDEX_TEXTURE = 0; //{ get { return indexTextureConfig.Value; } set { indexTextureConfig.Value = value; } }
         public List<AssetFolder> FOLDERS = new List<AssetFolder>();
         public List<GameObject> REFERENCES = new List<GameObject>();
 
         public SpraycanHandler() {
-            //indexMeshConfig = Main.Instance.Config.Bind<int>("General", $"Spraycan_IndexMesh", 0);
-            //indexTextureConfig = Main.Instance.Config.Bind<int>("General", $"Spraycan_IndexTexture", 0);
+            //indexMeshConfig = Main.Instance?.Config.Bind<int>("Save Index", $"{WorldHandler.instance.currentPlayer.character}_SPRAYCAN_Mesh_Index", 0);
+            //indexTextureConfig = Main.Instance?.Config.Bind<int>("Save Index", $"{WorldHandler.instance.currentPlayer.character}_SPRAYCAN_Texture_Index", 0);
         }
 
         public void GetAssets() {

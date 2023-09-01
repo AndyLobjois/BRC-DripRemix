@@ -14,14 +14,14 @@ namespace DripRemix {
         //public ConfigEntry<int> indexMeshConfig;
         public ConfigEntry<int> indexTextureConfig;
         //public int INDEX_MESH { get { return indexMeshConfig.Value; } set { indexMeshConfig.Value = value; } }
-        public int INDEX_TEXTURE = 0; /*{ get { return indexTextureConfig.Value; } set { indexTextureConfig.Value = value; } }*/
+        public int INDEX_TEXTURE { get { return indexTextureConfig.Value; } set { indexTextureConfig.Value = value; } }
         public List<AssetFolder> FOLDERS = new List<AssetFolder>();
         public List<GameObject> REFERENCES = new List<GameObject>();
 
         public CharacterHandler(Characters character) {
-            //indexMeshConfig = Main.Instance.Config.Bind<int>("General", $"{CharacterToString(CHARACTER)}_IndexMesh", 0);
-            indexTextureConfig = Main.Instance.Config.Bind<int>("General", $"{CharacterToString(CHARACTER)}_IndexTexture", 0);
             this.CHARACTER = character;
+            //indexMeshConfig = Main.Instance?.Config.Bind<int>("Save Index", $"{CharacterToString(CHARACTER)}_Mesh_Index", 0);
+            indexTextureConfig = Main.Instance?.Config.Bind<int>("Save Index", $"{CharacterToString(this.CHARACTER)}_Texture_Index", 0);
         }
 
         public void GetAssets() {
