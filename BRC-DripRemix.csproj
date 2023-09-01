@@ -7,8 +7,8 @@
     <ProjectGuid>{A8395581-4EEA-4793-BB1C-EA718AA90E0F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MeshRemix</RootNamespace>
-    <AssemblyName>BRC-MeshRemix</AssemblyName>
+    <RootNamespace>DripRemix</RootNamespace>
+    <AssemblyName>BRC-DripRemix</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -18,11 +18,12 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\Jeux\Steam\steamapps\common\BombRushCyberfunk\BepInEx\plugins\BRC-MeshRemix\</OutputPath>
+    <OutputPath>..\..\..\..\..\Jeux\Steam\steamapps\common\BombRushCyberfunk\BepInEx\plugins\BRC-DripRemix\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,11 +35,19 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="CharacterRemix.cs" />
-    <Compile Include="MeshRemixInfos.cs" />
-    <Compile Include="MeshRemix.cs" />
+    <Compile Include="AssetFolder.cs" />
+    <Compile Include="Handlers\CharacterHandler.cs" />
+    <Compile Include="Handlers\GraffitiHandler.cs" />
+    <Compile Include="Infos.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="OBJImporter\OBJCharWordReader.cs" />
+    <Compile Include="OBJImporter\OBJLoader.cs" />
+    <Compile Include="OBJImporter\OBJLoaderHelper.cs" />
+    <Compile Include="OBJImporter\OBJObjectBuilder.cs" />
+    <Compile Include="Handlers\PhoneHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="GearHandler.cs" />
+    <Compile Include="Handlers\GearHandler.cs" />
+    <Compile Include="Handlers\SpraycanHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
@@ -77,6 +86,10 @@
       <HintPath>libs\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
       <Aliases>global</Aliases>
+    </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>libs\UnityEngine.ImageConversionModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.InputLegacyModule">
       <HintPath>libs\UnityEngine.InputLegacyModule.dll</HintPath>
