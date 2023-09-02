@@ -44,9 +44,9 @@ namespace DripRemix {
 
         public Dictionary<Characters, CharacterHandler> CHARACTERS = new Dictionary<Characters, CharacterHandler>();
         public Dictionary<MoveStyle, GearHandler> GEARS = new Dictionary<MoveStyle, GearHandler>();
-        public PhoneHandler PHONES = new PhoneHandler();
-        public SpraycanHandler SPRAYCANS = new SpraycanHandler();
-        public GraffitiHandler GRAFFITI = new GraffitiHandler();
+        public PhoneHandler PHONES;
+        public SpraycanHandler SPRAYCANS;
+        //public GraffitiHandler GRAFFITI = new GraffitiHandler();
 
         public static Dictionary<Characters, string> CHARACTERMAPS = new Dictionary<Characters, string>() {
             // Added by Characters.list order
@@ -84,15 +84,15 @@ namespace DripRemix {
             log($"{Infos.PLUGIN_NAME} {Infos.PLUGIN_VERSION} is loaded !");
 
             // Init Key Inputs
-            reloadKey = Config.Bind("Keybinds", "Reload", KeyCode.F5);
-            characterKey = Config.Bind("Keybinds", "CharacterKey", KeyCode.C, ConfigDescription.Empty); // ConfigDescription doesn't seems to work ?
-            gearKey = Config.Bind("Keybinds", "GearKey", KeyCode.G, ConfigDescription.Empty);
-            phoneKey = Config.Bind("Keybinds", "PhoneKey", KeyCode.P, ConfigDescription.Empty);
-            spraycanKey = Config.Bind("Keybinds", "SpraycanKey", KeyCode.B, ConfigDescription.Empty);
-            meshUpKey = Config.Bind("Keybinds", "MeshUP", KeyCode.Home, ConfigDescription.Empty);
-            meshDownKey = Config.Bind("Keybinds", "MeshDOWN", KeyCode.End, ConfigDescription.Empty);
-            textureUpKey = Config.Bind("Keybinds", "TextureUP", KeyCode.PageUp, ConfigDescription.Empty);
-            textureDownKey = Config.Bind("Keybinds", "TextureDOWN", KeyCode.PageDown, ConfigDescription.Empty);
+            reloadKey = Config.Bind("Keybinds", "Reload", KeyCode.F5); // Is there a way to display AcceptableValues only for the first input ?
+            characterKey = Config.Bind("Keybinds", "CharacterKey", KeyCode.C);
+            gearKey = Config.Bind("Keybinds", "GearKey", KeyCode.G);
+            phoneKey = Config.Bind("Keybinds", "PhoneKey", KeyCode.P);
+            spraycanKey = Config.Bind("Keybinds", "SpraycanKey", KeyCode.B);
+            meshUpKey = Config.Bind("Keybinds", "MeshUP", KeyCode.Home);
+            meshDownKey = Config.Bind("Keybinds", "MeshDOWN", KeyCode.End);
+            textureUpKey = Config.Bind("Keybinds", "TextureUP", KeyCode.PageUp);
+            textureDownKey = Config.Bind("Keybinds", "TextureDOWN", KeyCode.PageDown);
 
             // Init Folders and Lists
             foreach (KeyValuePair<Characters, string> entry in CHARACTERMAPS) {
@@ -102,6 +102,8 @@ namespace DripRemix {
             GEARS.Add(MoveStyle.INLINE, new GearHandler(MoveStyle.INLINE));
             GEARS.Add(MoveStyle.SKATEBOARD, new GearHandler(MoveStyle.SKATEBOARD));
             GEARS.Add(MoveStyle.BMX, new GearHandler(MoveStyle.BMX));
+            PHONES = new PhoneHandler();
+            SPRAYCANS = new SpraycanHandler();
 
             // Get Assets
             foreach (CharacterHandler handler in CHARACTERS.Values)
@@ -142,16 +144,16 @@ namespace DripRemix {
 
         void CheckInput(KeyCode key, Check check) {
             if (Input.GetKey(key)) {
-                if (Input.GetKeyDown(KeyCode.PageUp)) { // Mesh Swap -
+                if (Input.GetKeyDown(meshUpKey.Value)) { // Mesh Swap -
                     SetMesh(check, -1);
                 }
-                if (Input.GetKeyDown(KeyCode.PageDown)) { // Mesh Swap +
+                if (Input.GetKeyDown(meshDownKey.Value)) { // Mesh Swap +
                     SetMesh(check, +1);
                 }
-                if (Input.GetKeyDown(KeyCode.Home)) { // Texture Swap -
+                if (Input.GetKeyDown(textureUpKey.Value)) { // Texture Swap -
                     SetTexture(check, -1);
                 }
-                if (Input.GetKeyDown(KeyCode.End)) {// Texture Swap +
+                if (Input.GetKeyDown(textureDownKey.Value)) {// Texture Swap +
                     SetTexture(check, +1);
                 }
             }
@@ -221,6 +223,14 @@ namespace DripRemix {
 
             // Spraycan
             SPRAYCANS.REFERENCES.Add((visual.handR.Find("propr/spraycan(Clone)").gameObject));
+
+            // Spraycan Caps
+            GameObject[] RootGameObjects = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
+            foreach (GameObject go in RootGameObjects) {
+                if (go.name == "spraycanCapJunk(Clone)") {
+                    SPRAYCANS.REFERENCES.Add(go);
+                }
+            }
         }
 
         void Reload() {

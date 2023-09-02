@@ -5,7 +5,7 @@ namespace DripRemix.Handlers {
 
     public class SpraycanHandler : DripHandler {
 
-        public SpraycanHandler(): base($"{WorldHandler.instance?.currentPlayer?.character}_SPRAYCAN") {
+        public SpraycanHandler() : base($"{WorldHandler.instance?.currentPlayer?.character}_SPRAYCAN") {
             AssetFolder = Main.SpraycansFolder;
         }
 
@@ -17,7 +17,7 @@ namespace DripRemix.Handlers {
                 string _names = "";
                 for (int i = 0; i < FOLDERS.Count; i++)
                     _names += $"\n   • {FOLDERS[i].name} by {FOLDERS[i].author}";
-                Main.log($"{FOLDERS.Count} Phone(s) loaded ! {_names}");
+                Main.log($"{FOLDERS.Count} Spraycan(s) loaded ! {_names}");
             }
         }
 
@@ -51,8 +51,11 @@ namespace DripRemix.Handlers {
                     _ref.GetComponent<MeshRenderer>().material.mainTexture = FOLDERS[INDEX_MESH].textures[INDEX_TEXTURE];
                     _ref.GetComponent<MeshRenderer>().material.SetTexture("_Emission", FOLDERS[INDEX_MESH].emissions[INDEX_TEXTURE]);
 
-                    Texture2D _tex = FOLDERS[INDEX_MESH].textures[INDEX_TEXTURE] as Texture2D;
-                    _ref.transform.GetChild(0).GetComponent<ParticleSystemRenderer>().material.color = _tex.GetPixel(1,1);
+                    // Change Color Spray
+                    if (_ref.name == "spraycan(Clone)") {
+                        Texture2D _tex = FOLDERS[INDEX_MESH].textures[INDEX_TEXTURE] as Texture2D;
+                        _ref.transform.GetChild(0).GetComponent<ParticleSystemRenderer>().material.color = _tex.GetPixel(1, 1);
+                    }
                 }
             }
         }

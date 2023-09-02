@@ -5,7 +5,7 @@ namespace DripRemix.Handlers {
 
     public class PhoneHandler : DripHandler {
 
-        public PhoneHandler():base($"{WorldHandler.instance?.currentPlayer?.character}_PHONE") {
+        public PhoneHandler() : base($"{WorldHandler.instance?.currentPlayer?.character}_PHONE") {
             AssetFolder = Main.PhonesFolder;
         }
 
@@ -42,7 +42,6 @@ namespace DripRemix.Handlers {
         override public void SetTexture(int indexMod) {
             // Check if there is at least something to change
             if (FOLDERS.Count > 0) {
-
                 // Add value to the Index
                 INDEX_TEXTURE = Mathf.Clamp(INDEX_TEXTURE + indexMod, 0, FOLDERS[INDEX_MESH].textures.Count - 1);
 
