@@ -1,6 +1,6 @@
 <p align="center"><img src="RESOURCES/img/icon.png"></p>
 
-<img src="RESOURCES/img/DripRemix0.gif"><img src="RESOURCES/img/DripRemix1.gif"><img src="RESOURCES/img/DripRemix2.gif"><img src="RESOURCES/img/DripRemix3.gif">
+<p align="center"><img src="RESOURCES/img/DripRemix0.gif" width="200"><img src="RESOURCES/img/DripRemix1.gif" width="200"><img src="RESOURCES/img/DripRemix2.gif" width="200"><img src="RESOURCES/img/DripRemix3.gif" width="200"></p>
 
 ### Swap Skins and Models for your Character, Gears, Phone & Spraycan directly in-game ! (No Unity required)
 
