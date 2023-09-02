@@ -3,30 +3,58 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using BepInEx.Configuration;
+using Reptile;
 using OBJImporter;
 
 namespace DripRemix.Handlers
 {
     public class DripHandler
     {
-        public ConfigEntry<int> indexMeshConfig;
-        public ConfigEntry<int> indexTextureConfig;
 
         public List<AssetFolder> FOLDERS = new List<AssetFolder>();
         public List<GameObject> REFERENCES = new List<GameObject>();
 
-        public int INDEX_MESH { get { return indexMeshConfig?.Value ?? 0; } set { if (indexMeshConfig != null) indexMeshConfig.Value = value; } }
-        public int INDEX_TEXTURE { get { return indexTextureConfig?.Value ?? 0; } set { if (indexTextureConfig != null) indexTextureConfig.Value = value; } }
+        protected HandlerTypes type;
+
+        public int INDEX_MESH {
+            get {
+                var currentChar = WorldHandler.instance?.currentPlayer?.character;
+                return Main.Instance?.SavedIndexes[currentChar ?? Characters.NONE].Value.indexes[(int)type].Mesh ?? 0;
+            }
+            set {
+                var currentChar = WorldHandler.instance?.currentPlayer?.character;
+                var config = Main.Instance?.SavedIndexes[currentChar ?? Characters.NONE];
+                if (config != null) {
+                    HandlersConfig hc = config.Value;
+                    hc.indexes[(int)type].Mesh = value;
+                    config.Value = hc;
+                    Main.Instance.Config.Save();
+                }
+            }
+        }
+        public int INDEX_TEXTURE
+        {
+            get {
+                var currentChar = WorldHandler.instance?.currentPlayer?.character;
+                return Main.Instance?.SavedIndexes[currentChar ?? Characters.NONE].Value.indexes[(int)type].Texture ?? 0;
+            }
+            set {
+                var currentChar = WorldHandler.instance?.currentPlayer?.character;
+                var config = Main.Instance?.SavedIndexes[currentChar ?? Characters.NONE];
+                if (config != null) {
+                    HandlersConfig hc = config.Value;
+                    hc.indexes[(int)type].Texture = value;
+                    config.Value = hc;
+                    Main.Instance.Config.Save();
+                }
+            }
+        }
 
 
         public DirectoryInfo AssetFolder { get; protected set; }
 
-        public DripHandler(string configPath) {
-            if (configPath != null)
-            {
-                indexMeshConfig = Main.Instance?.Config.Bind<int>("Save Index", $"{configPath}_Mesh_Index", 0);
-                indexTextureConfig = Main.Instance?.Config.Bind<int>("Save Index", $"{configPath}_Texture_Index", 0);
-            }
+        public DripHandler(HandlerTypes type) {
+            this.type = type;
         }
 
         virtual public void GetAssets() {

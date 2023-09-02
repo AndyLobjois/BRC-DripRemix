@@ -5,7 +5,7 @@ namespace DripRemix.Handlers {
 
     public class PhoneHandler : DripHandler {
 
-        public PhoneHandler() : base($"{WorldHandler.instance?.currentPlayer?.character}_PHONE") {
+        public PhoneHandler() : base(HandlerTypes.Phone) {
             AssetFolder = Main.PhonesFolder;
         }
 

@@ -9,9 +9,8 @@ namespace DripRemix.Handlers {
 
         public Characters CHARACTER;
 
-        public CharacterHandler(Characters character) : base($"{CharacterToString(character)}") {
+        public CharacterHandler(Characters character) : base(HandlerTypes.Character) {
             this.CHARACTER = character;
-            indexMeshConfig = null;
             AssetFolder = Main.CharactersFolder.CreateSubdirectory(CharacterToString(CHARACTER));
         }
 

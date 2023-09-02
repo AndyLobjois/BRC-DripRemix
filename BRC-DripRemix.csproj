@@ -49,6 +49,7 @@
     <Compile Include="Handlers\GearHandler.cs" />
     <Compile Include="Handlers\SpraycanHandler.cs" />
     <Compile Include="Handlers\DripHandler.cs" />
+    <Compile Include="Handlers\HandlersConfig.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
