@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Logging;
@@ -205,18 +206,18 @@ namespace DripRemix {
             }
 
             // Gears
-            GEARS[MoveStyle.SKATEBOARD].REFERENCES.Add((visual.skateboardBone.Find("skateboard(Clone)").gameObject));
+            GEARS[MoveStyle.SKATEBOARD].REFERENCES.Add((visual.moveStyleProps.skateboard));
 
-            GEARS[MoveStyle.INLINE].REFERENCES.Add((visual.footL.Find("skateLeft(Clone)").gameObject));
-            GEARS[MoveStyle.INLINE].REFERENCES.Add((visual.footR.Find("skateRight(Clone)").gameObject));
+            GEARS[MoveStyle.INLINE].REFERENCES.Add((visual.moveStyleProps.skateL));
+            GEARS[MoveStyle.INLINE].REFERENCES.Add((visual.moveStyleProps.skateR));
 
-            GEARS[MoveStyle.BMX].REFERENCES.Add((visual.bmxFrameBone.Find("BmxFrame(Clone)").gameObject));
-            GEARS[MoveStyle.BMX].REFERENCES.Add((visual.bmxGearBone.Find("BmxGear(Clone)").gameObject));
-            GEARS[MoveStyle.BMX].REFERENCES.Add((visual.bmxHandlebarsBone.Find("BmxHandlebars(Clone)").gameObject));
-            GEARS[MoveStyle.BMX].REFERENCES.Add((visual.bmxPedalLBone.Find("BmxPedalL(Clone)").gameObject));
-            GEARS[MoveStyle.BMX].REFERENCES.Add((visual.bmxPedalRBone.Find("BmxPedalR(Clone)").gameObject));
-            GEARS[MoveStyle.BMX].REFERENCES.Add((visual.bmxWheelFBone.Find("BmxWheelF(Clone)").gameObject));
-            GEARS[MoveStyle.BMX].REFERENCES.Add((visual.bmxWheelRBone.Find("BmxWheelR(Clone)").gameObject));
+            GEARS[MoveStyle.BMX].REFERENCES.Add((visual.moveStyleProps.bmxFrame));
+            GEARS[MoveStyle.BMX].REFERENCES.Add((visual.moveStyleProps.bmxGear));
+            GEARS[MoveStyle.BMX].REFERENCES.Add((visual.moveStyleProps.bmxHandlebars));
+            GEARS[MoveStyle.BMX].REFERENCES.Add((visual.moveStyleProps.bmxPedalL));
+            GEARS[MoveStyle.BMX].REFERENCES.Add((visual.moveStyleProps.bmxPedalR));
+            GEARS[MoveStyle.BMX].REFERENCES.Add((visual.moveStyleProps.bmxWheelF));
+            GEARS[MoveStyle.BMX].REFERENCES.Add((visual.moveStyleProps.bmxWheelR));
 
             // Phone
             PHONES.REFERENCES.Add((visual.handL.Find("propl/phoneInHand(Clone)").gameObject));

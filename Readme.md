@@ -1,5 +1,7 @@
 <p align="center"><img src="RESOURCES/img/icon.png"></p>
 
+<img src="RESOURCES/img/DripRemix0.gif"><img src="RESOURCES/img/DripRemix1.gif"><img src="RESOURCES/img/DripRemix2.gif"><img src="RESOURCES/img/DripRemix3.gif">
+
 ### Swap Skins and Models for your Character, Gears, Phone & Spraycan directly in-game ! (No Unity required)
 
 - *`Unlimited Skins Swap per Character` → Character models can't be swap for now ! Sorry !*
