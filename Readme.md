@@ -2,23 +2,31 @@
 
 ### Swap Skins and Models for your Character, Gears, Phone & Spraycan directly in-game ! (No Unity required)
 
+- *`Unlimited Skins Swap per Character` → Character models can't be swap for now ! Sorry !*
+- *`Unlimited Skins/Models Swap for Movestyles/Gears, Phone and Spraycan`*
+- *`Custom Color Spray` → Takes bottom left pixel from the texture*
+- *`Quick Reload In-game`*
+- *`Easy Skins/Models Installation & Edit` → Drop .obj and .png/.jpg inside a folder, **no Unity required !***
+- *`Custom Binding`*
+- *`Save System` → Save System **per Character** comes very soon !*
+
 # HOW TO INSTALL / HOW TO USE
 
-Check the [Thunderstore page](https://lethal-league-blaze.thunderstore.io/c/bomb-rush-cyberfunk/p/AndyLobjois/DripRemix/) for more informations.
+Check the [**Thunderstore Page**](https://lethal-league-blaze.thunderstore.io/c/bomb-rush-cyberfunk/p/AndyLobjois/DripRemix/) for more informations ★
 
-# HOW TO MAKE YOUR OWN SKINS/MODELS [WIP]
+# HOW TO MAKE YOUR OWN SKINS/MODELS
 
 - No Unity required ! Dig it !
-- Download [Models.zip](https://github.com/AndyLobjois/BRC-DripRemix/blob/main/RESOURCES/Models.zip)
+- Download [**Models.zip**](https://github.com/AndyLobjois/BRC-DripRemix/blob/main/RESOURCES/Models.zip)
 - Edit the `.blend` of your choice
-- Duplicate a folder as a template (I recommand my [examples.zip](https://github.com/AndyLobjois/BRC-DripRemix/blob/main/RESOURCES/Examples.zip))
+- Duplicate a folder from your `ModdingFolder` as a template (I recommand my [**Examples.zip**](https://github.com/AndyLobjois/BRC-DripRemix/blob/main/RESOURCES/Examples.zip))
 - Export each **parts** in `.obj` format and overwrite the corresponding files **(Don't rename it !)**
    - Export settings:
       - `Selected Only : True`
       - `Forward Axis : +Z`
-   - Remove the `.mtl` files
-- Edit the `info.txt` and put the name/author
-- Add as many textures as you want (You can rename them for giving a specific order)
+- Remove the `.mtl` files
+- Edit the `info.txt` and put the **name/author**
+- Edit/Add as many textures as you want (You can rename them for giving a specific order)
 - It's done ! You can launch the game and see from your own eyes !
    - Don't forget you can **reload** your mod by pressing `F5` without exiting the game !
 
