@@ -220,6 +220,9 @@ namespace DripRemix {
 
             // Phone
             PHONES.REFERENCES.Add((visual.handL.Find("propl/phoneInHand(Clone)").gameObject));
+            GameObject phone = GameObject.Find("Phone(Clone)");
+            PHONES.REFERENCES.Add(phone.transform.Find("OpenCanvas/PhoneContainerOpen/PhoneOpen").gameObject);
+            PHONES.REFERENCES.Add(phone.transform.Find("ClosedCanvas/PhoneContainerClosed/PhoneClosed").gameObject);
 
             // Spraycan
             SPRAYCANS.REFERENCES.Add((visual.handR.Find("propr/spraycan(Clone)").gameObject));

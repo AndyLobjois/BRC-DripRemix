@@ -44,6 +44,8 @@ namespace DripRemix.Handlers
                 Dictionary<string, Mesh> meshes = new Dictionary<string, Mesh>();
                 List<Texture> textures = new List<Texture>();
                 List<Texture> emissions = new List<Texture>();
+                List<Texture> sprites1 = new List<Texture>();
+                List<Texture> sprites2 = new List<Texture>();
 
                 foreach (FileInfo file in files)
                 {
@@ -79,20 +81,38 @@ namespace DripRemix.Handlers
                                 }
                             }
                         }
+                        else if (file.Name.Contains("_PhoneOpen"))
+                            {
+                            for (int i = 0; i < textures.Count; i++)
+                                {
+                                if (textures[i].name == file.Name.Replace("_PhoneOpen", "")) {
+                                    sprites1[i] = img;
+                                }
+                            }
+                        }
+                        else if (file.Name.Contains("_PhoneClose"))
+                            {
+                            for (int i = 0; i < textures.Count; i++)
+                                {
+                                if (textures[i].name == file.Name.Replace("_PhoneClose", "")) {
+                                    sprites2[i] = img;
+                                }
+                            }
+                        }
                         else
                         {
                             textures.Add(img);
                             emissions.Add(Texture2D.blackTexture);
+                            sprites1.Add(Texture2D.blackTexture);
+                            sprites2.Add(Texture2D.blackTexture);
                         }
                     }
                 }
 
-                FOLDERS.Add(new AssetFolder(name, author, meshes, textures, emissions));
+                FOLDERS.Add(new AssetFolder(name, author, meshes, textures, emissions, sprites1, sprites2));
             }
 
-            // Index ???? I can't remember why it's needed 
-            // It's needed for a reload to keep the index in-bounds in case the user removes one
-
+            // Index (It's needed for a reload to keep the index in-bounds in case the user removes one)
             INDEX_MESH = Mathf.Clamp(INDEX_MESH, 0, FOLDERS.Count - 1);
             INDEX_TEXTURE = Mathf.Clamp(INDEX_TEXTURE, 0, FOLDERS[INDEX_MESH].textures.Count - 1);
         }

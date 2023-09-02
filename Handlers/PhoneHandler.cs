@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using Reptile;
 
 namespace DripRemix.Handlers {
@@ -29,12 +30,14 @@ namespace DripRemix.Handlers {
 
                 // Change every reference by the new model
                 foreach (GameObject _ref in REFERENCES) {
-                    // Load Meshes
-                    Mesh meshBuffer;
-                    FOLDERS[INDEX_MESH].meshes.TryGetValue(_ref.name, out meshBuffer);
+                    if (_ref.GetComponent<MeshFilter>()) {
+                        // Load Meshes
+                        Mesh meshBuffer;
+                        FOLDERS[INDEX_MESH].meshes.TryGetValue(_ref.name, out meshBuffer);
 
-                    // Assign
-                    _ref.GetComponent<MeshFilter>().mesh = meshBuffer;
+                        // Assign
+                        _ref.GetComponent<MeshFilter>().mesh = meshBuffer;
+                    }
                 }
             }
         }
@@ -47,8 +50,18 @@ namespace DripRemix.Handlers {
 
                 // Change every references by the new texture
                 foreach (GameObject _ref in REFERENCES) {
-                    _ref.GetComponent<MeshRenderer>().material.mainTexture = FOLDERS[INDEX_MESH].textures[INDEX_TEXTURE];
-                    _ref.GetComponent<MeshRenderer>().material.SetTexture("_Emission", FOLDERS[INDEX_MESH].emissions[INDEX_TEXTURE]);
+                    if (_ref.name == "PhoneOpen") {
+                        Texture2D tex = FOLDERS[INDEX_MESH].sprites1[INDEX_TEXTURE] as Texture2D;
+                        _ref.GetComponent<Image>().sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.zero);
+                    }
+                    else if (_ref.name == "PhoneClosed") {
+                        Texture2D tex = FOLDERS[INDEX_MESH].sprites2[INDEX_TEXTURE] as Texture2D;
+                        _ref.GetComponent<Image>().sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.zero);
+                    }
+                    else {
+                        _ref.GetComponent<MeshRenderer>().material.mainTexture = FOLDERS[INDEX_MESH].textures[INDEX_TEXTURE];
+                        _ref.GetComponent<MeshRenderer>().material.SetTexture("_Emission", FOLDERS[INDEX_MESH].emissions[INDEX_TEXTURE]);
+                    }
                 }
             }
         }

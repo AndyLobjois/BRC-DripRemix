@@ -66,9 +66,9 @@ namespace DripRemix.Handlers {
                 FOLDERS.Add(new AssetFolder(name, author, meshes, textures, emissions));
             }
 
-            // Index ???? I can't remember why it's needed
-            //INDEX_MESH = Mathf.Clamp(INDEX_MESH, 0, FOLDERS.Count - 1);
-            //INDEX_TEXTURE = Mathf.Clamp(INDEX_TEXTURE, 0, FOLDERS[INDEX_MESH].textures.Count - 1);
+            // Index (It's needed for a reload to keep the index in-bounds in case the user removes one)
+            INDEX_MESH = Mathf.Clamp(INDEX_MESH, 0, FOLDERS.Count - 1);
+            INDEX_TEXTURE = Mathf.Clamp(INDEX_TEXTURE, 0, FOLDERS[INDEX_MESH].textures.Count - 1);
 
             // Log
             if (FOLDERS.Count > 0) {
