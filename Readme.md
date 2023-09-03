@@ -7,10 +7,11 @@
 - *`Unlimited Skins Swap per Character` → Character models can't be swap for now ! Sorry !*
 - *`Unlimited Skins/Models Swap for Movestyles/Gears, Phone and Spraycan`*
 - *`Custom Color Spray` → Takes bottom left pixel from the texture*
+- *`Advance Texture Options` → Emission maps for everything and Phone UI*
 - *`Quick Reload In-game`*
 - *`Easy Skins/Models Installation & Edit` → Drop .obj and .png/.jpg inside a folder, **no Unity required !***
 - *`Custom Binding`*
-- *`Save System` → Save System **per Character** comes very soon !*
+- *`Save System per Character` → Skin/Model of Character, Gears, Phone and Spraycan*
 
 # HOW TO INSTALL / HOW TO USE
 
@@ -38,3 +39,8 @@ Check the [**Thunderstore Page**](https://lethal-league-blaze.thunderstore.io/c/
 - **Glomzubuk** — Code Structure & Save/Binding System
 
 *Thanks LMR_1 for the previous logo !*
+
+# CHANGELOG
+- [0.1.0] Gears Swapping (MeshRemix was the old name of the tool)
+- [1.0.0] Character Skins, Gears Skins/Models, Phone Skins/Models (with UI), Spraycan Skins/Models (with Color Spray)
+- [1.0.1] Fix Missing Folders error, Fix PhoneClosed that doesn't show up, Color Spray added to GraffitiGame
