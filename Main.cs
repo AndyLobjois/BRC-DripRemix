@@ -7,6 +7,7 @@ using BepInEx.Logging;
 using BepInEx.Configuration;
 using UnityEngine;
 using Reptile;
+using Reptile.Phone;
 using OBJImporter;
 using DripRemix.Handlers;
 
@@ -40,6 +41,7 @@ namespace DripRemix {
 
         // References
         public int HASH;
+        public bool GRAFFITIGAME_EDITED = false;
         public GameObject PLAYER;
         public enum Check { Character, Gear, Phone, Spraycan }
 
@@ -136,6 +138,14 @@ namespace DripRemix {
 
                     ReloadReferences();
                 }
+
+                if (WorldHandler.instance.currentPlayer.inGraffitiGame) {
+                    SPRAYCANS.SetGraffitiEffect();
+
+                    // Trying to Remove Flash during GraffitiGame
+                    //GraffitiGame graffitiGame = FindObjectOfType<GraffitiGame>();
+                    //graffitiGame.flashDuration = 0;
+                }
             }
         }
 
@@ -206,34 +216,34 @@ namespace DripRemix {
 
         void GetReferences() {
             CharacterVisual visual = WorldHandler.instance.currentPlayer.characterVisual;
+            Phone phone = WorldHandler.instance.currentPlayer.phone;
 
             // Character
             foreach (KeyValuePair<Characters, string> entry in CHARACTERMAPS) {
-                CHARACTERS[entry.Key].REFERENCES.Add((visual.characterObject.transform.Find("mesh").gameObject));
+                CHARACTERS[entry.Key].REFERENCES.Add(visual.characterObject.transform.Find("mesh").gameObject);
             }
 
             // Gears
-            GEARS[MoveStyle.SKATEBOARD].REFERENCES.Add((visual.moveStyleProps.skateboard));
+            GEARS[MoveStyle.SKATEBOARD].REFERENCES.Add(visual.moveStyleProps.skateboard);
 
-            GEARS[MoveStyle.INLINE].REFERENCES.Add((visual.moveStyleProps.skateL));
-            GEARS[MoveStyle.INLINE].REFERENCES.Add((visual.moveStyleProps.skateR));
+            GEARS[MoveStyle.INLINE].REFERENCES.Add(visual.moveStyleProps.skateL);
+            GEARS[MoveStyle.INLINE].REFERENCES.Add(visual.moveStyleProps.skateR);
 
-            GEARS[MoveStyle.BMX].REFERENCES.Add((visual.moveStyleProps.bmxFrame));
-            GEARS[MoveStyle.BMX].REFERENCES.Add((visual.moveStyleProps.bmxGear));
-            GEARS[MoveStyle.BMX].REFERENCES.Add((visual.moveStyleProps.bmxHandlebars));
-            GEARS[MoveStyle.BMX].REFERENCES.Add((visual.moveStyleProps.bmxPedalL));
-            GEARS[MoveStyle.BMX].REFERENCES.Add((visual.moveStyleProps.bmxPedalR));
-            GEARS[MoveStyle.BMX].REFERENCES.Add((visual.moveStyleProps.bmxWheelF));
-            GEARS[MoveStyle.BMX].REFERENCES.Add((visual.moveStyleProps.bmxWheelR));
+            GEARS[MoveStyle.BMX].REFERENCES.Add(visual.moveStyleProps.bmxFrame);
+            GEARS[MoveStyle.BMX].REFERENCES.Add(visual.moveStyleProps.bmxGear);
+            GEARS[MoveStyle.BMX].REFERENCES.Add(visual.moveStyleProps.bmxHandlebars);
+            GEARS[MoveStyle.BMX].REFERENCES.Add(visual.moveStyleProps.bmxPedalL);
+            GEARS[MoveStyle.BMX].REFERENCES.Add(visual.moveStyleProps.bmxPedalR);
+            GEARS[MoveStyle.BMX].REFERENCES.Add(visual.moveStyleProps.bmxWheelF);
+            GEARS[MoveStyle.BMX].REFERENCES.Add(visual.moveStyleProps.bmxWheelR);
 
             // Phone
-            PHONES.REFERENCES.Add((visual.handL.Find("propl/phoneInHand(Clone)").gameObject));
-            GameObject phone = GameObject.Find("Phone(Clone)");
-            PHONES.REFERENCES.Add(phone.transform.Find("OpenCanvas/PhoneContainerOpen/PhoneOpen").gameObject);
-            PHONES.REFERENCES.Add(phone.transform.Find("ClosedCanvas/PhoneContainerClosed/PhoneClosed").gameObject);
+            PHONES.REFERENCES.Add(visual.handL.Find("propl/phoneInHand(Clone)").gameObject);
+            PHONES.REFERENCES.Add(phone.openPhoneCanvas.transform.Find("PhoneContainerOpen/PhoneOpen").gameObject);
+            PHONES.REFERENCES.Add(phone.closedPhoneCanvas.transform.Find("PhoneContainerClosed/PhoneClosed").gameObject);
 
             // Spraycan
-            SPRAYCANS.REFERENCES.Add((visual.handR.Find("propr/spraycan(Clone)").gameObject));
+            SPRAYCANS.REFERENCES.Add(visual.handR.Find("propr/spraycan(Clone)").gameObject);
 
             // Spraycan Caps
             GameObject[] RootGameObjects = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();

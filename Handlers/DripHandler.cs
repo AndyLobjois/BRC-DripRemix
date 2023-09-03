@@ -65,84 +65,73 @@ namespace DripRemix.Handlers
             DirectoryInfo[] folders = AssetFolder.GetDirectories();
             foreach (DirectoryInfo folder in folders)
             {
-                FileInfo[] files = folder.GetFiles("*", SearchOption.TopDirectoryOnly);
-
-                string name = "";
-                string author = "";
-                Dictionary<string, Mesh> meshes = new Dictionary<string, Mesh>();
-                List<Texture> textures = new List<Texture>();
-                List<Texture> emissions = new List<Texture>();
-                List<Texture> sprites1 = new List<Texture>();
-                List<Texture> sprites2 = new List<Texture>();
-
-                foreach (FileInfo file in files)
+                // Check if there is Folder to open
+                if (Directory.GetFileSystemEntries(folder.FullName).Length != 0)
                 {
-                    // Info
-                    if (file.Extension == ".txt")
-                    {
-                        string[] lines = File.ReadAllLines(file.FullName);
-                        name = lines[0].Split('=')[1];
-                        author = lines[1].Split('=')[1];
-                    }
+                    FileInfo[] files = folder.GetFiles("*", SearchOption.TopDirectoryOnly);
 
-                    // Meshes
-                    if (file.Extension == ".obj")
-                    {
-                        meshes.Add(file.Name.Replace(file.Extension, ""), new OBJLoader().Load(file.FullName));
-                    }
+                    string name = "";
+                    string author = "";
+                    Dictionary<string, Mesh> meshes = new Dictionary<string, Mesh>();
+                    List<Texture> textures = new List<Texture>();
+                    List<Texture> emissions = new List<Texture>();
+                    List<Texture> sprites1 = new List<Texture>();
+                    List<Texture> sprites2 = new List<Texture>();
 
-                    // Textures
-                    if (file.Extension == ".png" || file.Extension == ".jpg")
-                    {
-                        byte[] bytes = File.ReadAllBytes(file.FullName);
-                        Texture2D img = new Texture2D(2, 2);
-                        img.LoadImage(bytes);
-                        img.name = file.Name;
+                    foreach (FileInfo file in files) {
+                        // Info
+                        if (file.Extension == ".txt") {
+                            string[] lines = File.ReadAllLines(file.FullName);
+                            name = lines[0].Split('=')[1];
+                            author = lines[1].Split('=')[1];
+                        }
 
-                        if (file.Name.Contains("_emission"))
-                        {
-                            for (int i = 0; i < textures.Count; i++)
-                            {
-                                if (textures[i].name == file.Name.Replace("_emission", ""))
-                                {
-                                    emissions[i] = img;
+                        // Meshes
+                        if (file.Extension == ".obj") {
+                            meshes.Add(file.Name.Replace(file.Extension, ""), new OBJLoader().Load(file.FullName));
+                        }
+
+                        // Textures
+                        if (file.Extension == ".png" || file.Extension == ".jpg") {
+                            byte[] bytes = File.ReadAllBytes(file.FullName);
+                            Texture2D img = new Texture2D(2, 2);
+                            img.LoadImage(bytes);
+                            img.name = file.Name;
+
+                            if (file.Name.Contains("_emission")) {
+                                for (int i = 0; i < textures.Count; i++) {
+                                    if (textures[i].name == file.Name.Replace("_emission", "")) {
+                                        emissions[i] = img;
+                                    }
                                 }
+                            } else if (file.Name.Contains("_PhoneOpen")) {
+                                for (int i = 0; i < textures.Count; i++) {
+                                    if (textures[i].name == file.Name.Replace("_PhoneOpen", "")) {
+                                        sprites1[i] = img;
+                                    }
+                                }
+                            } else if (file.Name.Contains("_PhoneClosed")) {
+                                for (int i = 0; i < textures.Count; i++) {
+                                    if (textures[i].name == file.Name.Replace("_PhoneClosed", "")) {
+                                        sprites2[i] = img;
+                                    }
+                                }
+                            } else {
+                                textures.Add(img);
+                                emissions.Add(Texture2D.blackTexture);
+                                sprites1.Add(Texture2D.blackTexture);
+                                sprites2.Add(Texture2D.blackTexture);
                             }
                         }
-                        else if (file.Name.Contains("_PhoneOpen"))
-                            {
-                            for (int i = 0; i < textures.Count; i++)
-                                {
-                                if (textures[i].name == file.Name.Replace("_PhoneOpen", "")) {
-                                    sprites1[i] = img;
-                                }
-                            }
-                        }
-                        else if (file.Name.Contains("_PhoneClose"))
-                            {
-                            for (int i = 0; i < textures.Count; i++)
-                                {
-                                if (textures[i].name == file.Name.Replace("_PhoneClose", "")) {
-                                    sprites2[i] = img;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            textures.Add(img);
-                            emissions.Add(Texture2D.blackTexture);
-                            sprites1.Add(Texture2D.blackTexture);
-                            sprites2.Add(Texture2D.blackTexture);
-                        }
                     }
+
+                    FOLDERS.Add(new AssetFolder(name, author, meshes, textures, emissions, sprites1, sprites2));
                 }
 
-                FOLDERS.Add(new AssetFolder(name, author, meshes, textures, emissions, sprites1, sprites2));
-            }
-
-            // Index (It's needed for a reload to keep the index in-bounds in case the user removes one)
-            INDEX_MESH = Mathf.Clamp(INDEX_MESH, 0, FOLDERS.Count - 1);
-            INDEX_TEXTURE = Mathf.Clamp(INDEX_TEXTURE, 0, FOLDERS[INDEX_MESH].textures.Count - 1);
+                // Index (It's needed for a reload to keep the index in-bounds in case the user removes one)
+                INDEX_MESH = Mathf.Clamp(INDEX_MESH, 0, FOLDERS.Count - 1);
+                INDEX_TEXTURE = Mathf.Clamp(INDEX_TEXTURE, 0, FOLDERS[INDEX_MESH].textures.Count - 1);
+            }   
         }
 
         virtual public void SetMesh(int indexMod) { }

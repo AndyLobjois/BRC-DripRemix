@@ -60,5 +60,37 @@ namespace DripRemix.Handlers {
             }
         }
 
+        public void SetGraffitiEffect() {
+            // Graffiti Effects
+            GraffitiEffect[] effects = GameObject.FindObjectsOfType<GraffitiEffect>();
+
+            foreach (GraffitiEffect effect in effects) {
+                // This effect is a mix of 2D Unlit textures and mesh "clouds"
+                // It's hard to color edit so I just disable it :D
+                if (effect.name == "grafExplosionEffectBig(Clone)") {
+                    effect.gameObject.SetActive(false);
+                }
+
+                // Splat, Splashes and Strokes
+                if (effect.splat) {
+                    effect.splat.startColor = Color.white;
+                    Texture2D _tex = FOLDERS[INDEX_MESH].textures[INDEX_TEXTURE] as Texture2D;
+                    effect.splat.GetComponent<ParticleSystemRenderer>().material.color = _tex.GetPixel(1, 1);
+                }
+
+                if (effect.splashes) {
+                    effect.splashes.startColor = Color.white;
+                    Texture2D _tex = FOLDERS[INDEX_MESH].textures[INDEX_TEXTURE] as Texture2D;
+                    effect.splashes.GetComponent<ParticleSystemRenderer>().material.color = _tex.GetPixel(1, 1);
+                }
+
+                if (effect.strokes) {
+                    effect.strokes.startColor = Color.white;
+                    Texture2D _tex = FOLDERS[INDEX_MESH].textures[INDEX_TEXTURE] as Texture2D;
+                    effect.strokes.GetComponent<ParticleSystemRenderer>().material.color = _tex.GetPixel(1, 1);
+                }
+            }
+        }
+
     }
 }
