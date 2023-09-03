@@ -5,7 +5,7 @@ namespace DripRemix.Handlers {
 
     public class SpraycanHandler : DripHandler {
 
-        public SpraycanHandler() : base($"{WorldHandler.instance?.currentPlayer?.character}_SPRAYCAN") {
+        public SpraycanHandler() : base(HandlerTypes.SprayCan) {
             AssetFolder = Main.SpraycansFolder;
         }
 

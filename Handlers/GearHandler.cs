@@ -8,7 +8,7 @@ namespace DripRemix.Handlers {
         public MoveStyle MOVESTYLE;
         public string movestyleName => MOVESTYLE.ToString().ToLower().FirstCharToUpper();
 
-        public GearHandler(MoveStyle moveStyle) : base ($"{WorldHandler.instance?.currentPlayer?.character}_{moveStyle}") {
+        public GearHandler(MoveStyle moveStyle) : base (HandlerTypes.Gear) {
             this.MOVESTYLE = moveStyle;
             AssetFolder = Main.GearsFolder.CreateSubdirectory(movestyleName);
         }

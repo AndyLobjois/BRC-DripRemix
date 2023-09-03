@@ -49,6 +49,8 @@ namespace DripRemix {
         public SpraycanHandler SPRAYCANS;
         //public GraffitiHandler GRAFFITI = new GraffitiHandler();
 
+        public Dictionary<Characters, ConfigEntry<HandlersConfig>> SavedIndexes = new Dictionary<Characters, ConfigEntry<HandlersConfig>>();
+
         public static Dictionary<Characters, string> CHARACTERMAPS = new Dictionary<Characters, string>() {
             // Added by Characters.list order
             [Characters.girl1] = "Vinyl",
@@ -83,6 +85,7 @@ namespace DripRemix {
             Instance = this;
             Log = this.Logger;
             log($"{Infos.PLUGIN_NAME} {Infos.PLUGIN_VERSION} is loaded !");
+            HandlersConfig.AddConverter();
 
             // Init Key Inputs
             reloadKey = Config.Bind("Keybinds", "Reload", KeyCode.F5); // Is there a way to display AcceptableValues only for the first input ?
@@ -96,9 +99,13 @@ namespace DripRemix {
             textureDownKey = Config.Bind("Keybinds", "TextureDOWN", KeyCode.PageDown);
 
             // Init Folders and Lists
+            SavedIndexes.Add(Characters.NONE, Config.Bind("Saved Indexes", $"Default Indexes", new HandlersConfig(Characters.NONE), $"Default saved indexes"));
+            Config.SaveOnConfigSet = true;
             foreach (KeyValuePair<Characters, string> entry in CHARACTERMAPS) {
                 CharactersFolder.CreateSubdirectory(Path.Combine(entry.Value, ".Default"));
+                SavedIndexes.Add(entry.Key, Config.Bind("Saved Indexes", $"Indexes for {entry.Value}", new HandlersConfig(entry.Key), $"Saved indexes for {entry.Value}"));
                 CHARACTERS.Add(entry.Key, new CharacterHandler(entry.Key));
+
             }
             GEARS.Add(MoveStyle.INLINE, new GearHandler(MoveStyle.INLINE));
             GEARS.Add(MoveStyle.SKATEBOARD, new GearHandler(MoveStyle.SKATEBOARD));
