@@ -20,9 +20,11 @@ Check the [**Thunderstore Page**](https://lethal-league-blaze.thunderstore.io/c/
 # HOW TO MAKE YOUR OWN SKINS/MODELS
 
 - No Unity required ! Dig it !
+- Duplicate a folder from your `ModdingFolder` as a template (I recommand my [**Examples.zip**](https://github.com/AndyLobjois/BRC-DripRemix/blob/main/RESOURCES/Examples.zip))
 - Download [**Models.zip**](https://github.com/AndyLobjois/BRC-DripRemix/blob/main/RESOURCES/Models.zip)
 - Edit the `.blend` of your choice
-- Duplicate a folder from your `ModdingFolder` as a template (I recommand my [**Examples.zip**](https://github.com/AndyLobjois/BRC-DripRemix/blob/main/RESOURCES/Examples.zip))
+- <ins>**IMPORTANT**</ins> : Before exporting, `reset location/rotation` of all **parts** ! (Location: 0,0,0, Rotation: 0,0,0)
+  - OBJ format doesn't support custom transform, you have to put it "correctly" in place before exporting.
 - Export each **parts** in `.obj` format and overwrite the corresponding files **(Don't rename it !)**
    - Export settings:
       - `Selected Only : True`
