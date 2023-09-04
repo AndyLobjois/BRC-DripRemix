@@ -217,10 +217,14 @@ namespace DripRemix {
         void GetReferences() {
             CharacterVisual visual = WorldHandler.instance.currentPlayer.characterVisual;
             Phone phone = WorldHandler.instance.currentPlayer.phone;
-
+            
             // Character
             foreach (KeyValuePair<Characters, string> entry in CHARACTERMAPS) {
-                CHARACTERS[entry.Key].REFERENCES.Add(visual.characterObject.transform.Find("mesh").gameObject);
+                if (WorldHandler.instance.currentPlayer.character == Characters.legendFace) {
+                    CHARACTERS[entry.Key].REFERENCES.Add(visual.characterObject.transform.Find("meshLegend").gameObject);
+                } else {
+                    CHARACTERS[entry.Key].REFERENCES.Add(visual.characterObject.transform.Find("mesh").gameObject);
+                }
             }
 
             // Gears
