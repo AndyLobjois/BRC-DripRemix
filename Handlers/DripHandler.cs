@@ -138,8 +138,8 @@ namespace DripRemix.Handlers
         virtual public void SetTexture(int indexMod) { }
 
         virtual public void Reapply () {
-            SetMesh(0);
-            SetTexture(0);
+            //SetMesh(0);
+            //SetTexture(0);
         }
     }
 }

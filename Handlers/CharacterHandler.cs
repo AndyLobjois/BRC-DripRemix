@@ -70,7 +70,7 @@ namespace DripRemix.Handlers {
             INDEX_TEXTURE = Mathf.Clamp(INDEX_TEXTURE, 0, FOLDERS[INDEX_MESH].textures.Count - 1);
 
             // Log
-            if (FOLDERS.Count > 0) {
+            if (FOLDERS[0].textures.Count > 0) {
                 //string _names = "";
                 //for (int i = 0; i < FOLDERS.Count; i++)
                 //    _names += $"\n   • {FOLDERS[i].name} by {FOLDERS[i].author}";

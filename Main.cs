@@ -43,6 +43,8 @@ namespace DripRemix {
         public int HASH;
         public bool GRAFFITIGAME_EDITED = false;
         public GameObject PLAYER;
+        public CharacterVisual PLAYER_VISUAL;
+        public Phone PLAYER_PHONE;
         public enum Check { Character, Gear, Phone, Spraycan }
 
         public Dictionary<Characters, CharacterHandler> CHARACTERS = new Dictionary<Characters, CharacterHandler>();
@@ -78,9 +80,9 @@ namespace DripRemix {
             [Characters.futureGirl] = "Futurism",
             [Characters.pufferGirl] = "Rise",
             [Characters.bunGirl] = "Shine",
-            //[Characters.headManNoJetpack] = "Faux (Prelude)", // Necessary ?
-            //[Characters.eightBallBoss] = "DOT EXE (Boss)", // Necessary ?
-            //[Characters.legendMetalHead] = "Red Felix (Dream)", // Necessary ?
+            [Characters.headManNoJetpack] = "Faux (Prelude)", // Necessary ?
+            [Characters.eightBallBoss] = "DOT EXE (Boss)", // Necessary ?
+            [Characters.legendMetalHead] = "Red Felix (Dream)", // Necessary ?
         };
 
         void Awake() {
@@ -215,45 +217,85 @@ namespace DripRemix {
         }
 
         void GetReferences() {
-            CharacterVisual visual = WorldHandler.instance.currentPlayer.characterVisual;
-            Phone phone = WorldHandler.instance.currentPlayer.phone;
+            try {
+                PLAYER_VISUAL = WorldHandler.instance.currentPlayer.characterVisual;
+            } catch (Exception e) {
+                logError("Player.CharacterVisual can't be referenced !");
+            }
+
+            try {
+                PLAYER_PHONE = WorldHandler.instance.currentPlayer.phone;
+            } catch (Exception e) {
+                logError("Player.Phone can't be referenced !");
+            }
+
             
             // Character
             foreach (KeyValuePair<Characters, string> entry in CHARACTERMAPS) {
-                if (WorldHandler.instance.currentPlayer.character == Characters.legendFace) {
-                    CHARACTERS[entry.Key].REFERENCES.Add(visual.characterObject.transform.Find("meshLegend").gameObject);
-                } else {
-                    CHARACTERS[entry.Key].REFERENCES.Add(visual.characterObject.transform.Find("mesh").gameObject);
+                foreach (Transform child in PLAYER_VISUAL.characterObject.transform) {
+                    try {
+                        if (child.GetComponent<SkinnedMeshRenderer>()) {
+                            CHARACTERS[entry.Key].REFERENCES.Add(child.gameObject);
+                        }
+                    } catch (Exception e) {
+                        logError("Character SkinnedMeshRenderer can't be referenced !");
+                    }
                 }
             }
 
             // Gears
-            GEARS[MoveStyle.SKATEBOARD].REFERENCES.Add(visual.moveStyleProps.skateboard);
+            try {
+                GEARS[MoveStyle.SKATEBOARD].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.skateboard);
+            } catch (Exception e) {
+                logError("Skateboard Gameobject can't be referenced !");
+            }
 
-            GEARS[MoveStyle.INLINE].REFERENCES.Add(visual.moveStyleProps.skateL);
-            GEARS[MoveStyle.INLINE].REFERENCES.Add(visual.moveStyleProps.skateR);
+            try {
+                GEARS[MoveStyle.INLINE].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.skateL);
+                GEARS[MoveStyle.INLINE].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.skateR);
+            } catch (Exception e) {
+                logError("Inline Gameobjects can't be referenced !");
+            }
 
-            GEARS[MoveStyle.BMX].REFERENCES.Add(visual.moveStyleProps.bmxFrame);
-            GEARS[MoveStyle.BMX].REFERENCES.Add(visual.moveStyleProps.bmxGear);
-            GEARS[MoveStyle.BMX].REFERENCES.Add(visual.moveStyleProps.bmxHandlebars);
-            GEARS[MoveStyle.BMX].REFERENCES.Add(visual.moveStyleProps.bmxPedalL);
-            GEARS[MoveStyle.BMX].REFERENCES.Add(visual.moveStyleProps.bmxPedalR);
-            GEARS[MoveStyle.BMX].REFERENCES.Add(visual.moveStyleProps.bmxWheelF);
-            GEARS[MoveStyle.BMX].REFERENCES.Add(visual.moveStyleProps.bmxWheelR);
+            try {
+                GEARS[MoveStyle.BMX].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.bmxFrame);
+                GEARS[MoveStyle.BMX].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.bmxGear);
+                GEARS[MoveStyle.BMX].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.bmxHandlebars);
+                GEARS[MoveStyle.BMX].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.bmxPedalL);
+                GEARS[MoveStyle.BMX].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.bmxPedalR);
+                GEARS[MoveStyle.BMX].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.bmxWheelF);
+                GEARS[MoveStyle.BMX].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.bmxWheelR);
+            } catch (Exception e) {
+                logError("BMX Gameobjects can't be referenced !");
+            }
+            
 
             // Phone
-            PHONES.REFERENCES.Add(visual.handL.Find("propl/phoneInHand(Clone)").gameObject);
-            PHONES.REFERENCES.Add(phone.openPhoneCanvas.transform.Find("PhoneContainerOpen/PhoneOpen").gameObject);
-            PHONES.REFERENCES.Add(phone.closedPhoneCanvas.transform.Find("PhoneContainerClosed/PhoneClosed").gameObject);
+            try {
+                PHONES.REFERENCES.Add(PLAYER_VISUAL.handL.Find("propl/phoneInHand(Clone)").gameObject);
+                PHONES.REFERENCES.Add(PLAYER_PHONE.openPhoneCanvas.transform.Find("PhoneContainerOpen/PhoneOpen").gameObject);
+                PHONES.REFERENCES.Add(PLAYER_PHONE.closedPhoneCanvas.transform.Find("PhoneContainerClosed/PhoneClosed").gameObject);
+            } catch (Exception e) {
+                logError("Phone Gameobjects can't be referenced !");
+            }
+
 
             // Spraycan
-            SPRAYCANS.REFERENCES.Add(visual.handR.Find("propr/spraycan(Clone)").gameObject);
+            try {
+                SPRAYCANS.REFERENCES.Add(PLAYER_VISUAL.handR.Find("propr/spraycan(Clone)").gameObject);
+            } catch (Exception e) {
+                logError("Spraycan Gameobject can't be referenced !");
+            }
 
             // Spraycan Caps
             GameObject[] RootGameObjects = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
             foreach (GameObject go in RootGameObjects) {
                 if (go.name == "spraycanCapJunk(Clone)") {
-                    SPRAYCANS.REFERENCES.Add(go);
+                    try {
+                        SPRAYCANS.REFERENCES.Add(go);
+                    } catch (Exception e) {
+                        logError("Spraycan Caps Gameobjects can't be referenced !");
+                    }
                 }
             }
         }
@@ -296,7 +338,10 @@ namespace DripRemix {
 
         static public void log(string message) {
             Log.LogMessage($"{message}");
-            //Debug.Log($"<color=orange>[DripRemix] {message}</color>");
+        }
+
+        static public void logError(string message) {
+            Log.LogError($"{message}");
         }
     }
 }
