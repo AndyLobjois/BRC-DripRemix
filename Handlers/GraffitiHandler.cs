@@ -5,7 +5,7 @@ namespace DripRemix.Handlers {
 
     public class GraffitiHandler : DripHandler
     {
-        public GraffitiHandler() : base(HandlerTypes.Grafiti)
+        public GraffitiHandler() : base(HandlerTypes.Graffiti)
         {
         }
     }

@@ -7,16 +7,20 @@ namespace DripRemix.Handlers {
 
     public class CharacterHandler : DripHandler {
 
-        public Characters CHARACTER;
+        public Characters CURRENTCHARACTER;
 
-        public CharacterHandler(Characters character) : base(HandlerTypes.Character) {
-            this.CHARACTER = character;
-            AssetFolder = Main.CharactersFolder.CreateSubdirectory(CharacterToString(CHARACTER));
+        public CharacterHandler(/*Characters character*/) : base(HandlerTypes.Character) {
+            //this.CURRENTCHARACTER = character;
+            //AssetFolder = Main.CharactersFolder.CreateSubdirectory(CharacterToString(CURRENTCHARACTER));
         }
 
         override public void GetAssets() {
             // Clean
             FOLDERS.Clear();
+
+            // Get Current Character
+            CURRENTCHARACTER = WorldHandler.instance.currentPlayer.character;
+            AssetFolder = Main.CharactersFolder.CreateSubdirectory(CharacterToString(CURRENTCHARACTER));
 
             // Search & Add
             DirectoryInfo[] folders = AssetFolder.GetDirectories();
@@ -65,16 +69,12 @@ namespace DripRemix.Handlers {
                 FOLDERS.Add(new AssetFolder(name, author, meshes, textures, emissions));
             }
 
-            // Index (It's needed for a reload to keep the index in-bounds in case the user removes one)
-            INDEX_MESH = Mathf.Clamp(INDEX_MESH, 0, FOLDERS.Count - 1);
-            INDEX_TEXTURE = Mathf.Clamp(INDEX_TEXTURE, 0, FOLDERS[INDEX_MESH].textures.Count - 1);
-
             // Log
-            if (FOLDERS.Count > 0) {
-                //string _names = "";
-                //for (int i = 0; i < FOLDERS.Count; i++)
-                //    _names += $"\n   • {FOLDERS[i].name} by {FOLDERS[i].author}";
-                Main.log($"{FOLDERS[0].textures.Count} Skin(s) for {CharacterToString(CHARACTER)} loaded !"); //{_names}
+            if (FOLDERS[0].textures.Count > 0) {
+                string _names = "";
+                for (int i = 0; i < FOLDERS[0].textures.Count; i++)
+                    _names += $"\n   • {FOLDERS[0].textures[i].name}";
+                Main.log($"{FOLDERS[0].textures.Count} Skin(s) for {CharacterToString(CURRENTCHARACTER)} loaded ! {_names}\n");
             }
         }
 

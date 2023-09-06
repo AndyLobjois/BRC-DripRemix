@@ -46,3 +46,5 @@ Check the [**Thunderstore Page**](https://lethal-league-blaze.thunderstore.io/c/
 - [0.1.0] Gears Swapping (MeshRemix was the old name of the tool)
 - [1.0.0] Character Skins, Gears Skins/Models, Phone Skins/Models (with UI), Spraycan Skins/Models (with Color Spray)
 - [1.0.1] Fix Missing Folders error, Fix PhoneClosed that doesn't show up, Color Spray added to GraffitiGame
+- [1.0.2] Fix Felix missing SkinnedMeshRenderer reference
+- [1.0.3] Fix Custom Char. Compatibility, Save System Fixed, Missing refs handlers (logError), Phone "rotation" fixed, New Shortcut for Spraycan (E)

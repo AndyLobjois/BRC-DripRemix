@@ -68,6 +68,6 @@ namespace DripRemix.Handlers
         Gear,
         Phone,
         SprayCan,
-        Grafiti
+        Graffiti
     }
 }

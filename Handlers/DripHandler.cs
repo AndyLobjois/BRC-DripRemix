@@ -32,8 +32,7 @@ namespace DripRemix.Handlers
                 }
             }
         }
-        public int INDEX_TEXTURE
-        {
+        public int INDEX_TEXTURE {
             get {
                 var currentChar = WorldHandler.instance?.currentPlayer?.character;
                 return Main.Instance?.SavedIndexes[currentChar ?? Characters.NONE].Value.indexes[(int)type].Texture ?? 0;
@@ -49,7 +48,6 @@ namespace DripRemix.Handlers
                 }
             }
         }
-
 
         public DirectoryInfo AssetFolder { get; protected set; }
 
@@ -127,10 +125,6 @@ namespace DripRemix.Handlers
 
                     FOLDERS.Add(new AssetFolder(name, author, meshes, textures, emissions, sprites1, sprites2));
                 }
-
-                // Index (It's needed for a reload to keep the index in-bounds in case the user removes one)
-                INDEX_MESH = Mathf.Clamp(INDEX_MESH, 0, FOLDERS.Count - 1);
-                INDEX_TEXTURE = Mathf.Clamp(INDEX_TEXTURE, 0, FOLDERS[INDEX_MESH].textures.Count - 1);
             }   
         }
 
