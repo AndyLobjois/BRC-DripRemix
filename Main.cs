@@ -47,7 +47,8 @@ namespace DripRemix {
         public Phone PLAYER_PHONE;
         public enum Check { Character, Gear, Phone, Spraycan }
 
-        public Dictionary<Characters, CharacterHandler> CHARACTERS = new Dictionary<Characters, CharacterHandler>();
+        //public Dictionary<Characters, CharacterHandler> CHARACTERS = new Dictionary<Characters, CharacterHandler>();
+        public CharacterHandler CHARACTER;
         public Dictionary<MoveStyle, GearHandler> GEARS = new Dictionary<MoveStyle, GearHandler>();
         public PhoneHandler PHONES;
         public SpraycanHandler SPRAYCANS;
@@ -80,15 +81,14 @@ namespace DripRemix {
             [Characters.futureGirl] = "Futurism",
             [Characters.pufferGirl] = "Rise",
             [Characters.bunGirl] = "Shine",
-            [Characters.headManNoJetpack] = "Faux (Prelude)", // Necessary ?
-            [Characters.eightBallBoss] = "DOT EXE (Boss)", // Necessary ?
-            [Characters.legendMetalHead] = "Red Felix (Dream)", // Necessary ?
+            [Characters.headManNoJetpack] = "Faux (Prelude)",
+            [Characters.eightBallBoss] = "DOT EXE (Boss)",
+            [Characters.legendMetalHead] = "Red Felix (Dream)",
         };
 
         void Awake() {
             Instance = this;
             Log = this.Logger;
-            log($"{Infos.PLUGIN_NAME} {Infos.PLUGIN_VERSION} is loaded !");
             HandlersConfig.AddConverter();
 
             // Init Key Inputs
@@ -96,37 +96,25 @@ namespace DripRemix {
             characterKey = Config.Bind("Keybinds", "CharacterKey", KeyCode.C);
             gearKey = Config.Bind("Keybinds", "GearKey", KeyCode.G);
             phoneKey = Config.Bind("Keybinds", "PhoneKey", KeyCode.P);
-            spraycanKey = Config.Bind("Keybinds", "SpraycanKey", KeyCode.B);
+            spraycanKey = Config.Bind("Keybinds", "SpraycanKey", KeyCode.E);
             meshUpKey = Config.Bind("Keybinds", "MeshUP", KeyCode.Home);
             meshDownKey = Config.Bind("Keybinds", "MeshDOWN", KeyCode.End);
             textureUpKey = Config.Bind("Keybinds", "TextureUP", KeyCode.PageUp);
             textureDownKey = Config.Bind("Keybinds", "TextureDOWN", KeyCode.PageDown);
 
-            // Init Folders and Lists
+            // Init Folders, Lists and Saved Indexes
             SavedIndexes.Add(Characters.NONE, Config.Bind("Saved Indexes", $"Default Indexes", new HandlersConfig(Characters.NONE), $"Default saved indexes"));
             Config.SaveOnConfigSet = true;
             foreach (KeyValuePair<Characters, string> entry in CHARACTERMAPS) {
                 CharactersFolder.CreateSubdirectory(Path.Combine(entry.Value, ".Default"));
                 SavedIndexes.Add(entry.Key, Config.Bind("Saved Indexes", $"Indexes for {entry.Value}", new HandlersConfig(entry.Key), $"Saved indexes for {entry.Value}"));
-                CHARACTERS.Add(entry.Key, new CharacterHandler(entry.Key));
-
             }
+            CHARACTER = new CharacterHandler();
             GEARS.Add(MoveStyle.INLINE, new GearHandler(MoveStyle.INLINE));
             GEARS.Add(MoveStyle.SKATEBOARD, new GearHandler(MoveStyle.SKATEBOARD));
             GEARS.Add(MoveStyle.BMX, new GearHandler(MoveStyle.BMX));
             PHONES = new PhoneHandler();
             SPRAYCANS = new SpraycanHandler();
-
-            // Get Assets
-            foreach (CharacterHandler handler in CHARACTERS.Values)
-                handler.GetAssets();
-
-            foreach (GearHandler handler in GEARS.Values)
-                handler.GetAssets();
-
-            PHONES.GetAssets();
-            SPRAYCANS.GetAssets();
-            //GRAFFITI.GetAssets(); //WorldHandler.instance.graffitiArtInfo.graffitiArt[0].graffitiMaterial.mainTexture
         }
 
         void LateUpdate() {
@@ -135,10 +123,13 @@ namespace DripRemix {
                     HASH = WorldHandler.instance.currentPlayer.characterVisual.GetHashCode();
 
                     // Get All References
-                    PLAYER = WorldHandler.instance?.currentPlayer.gameObject;
-                    log("Player has been found!");
+                    try {
+                        PLAYER = WorldHandler.instance?.currentPlayer.gameObject;
+                    } catch {
+                        logError("Player can't be referenced !");
+                    }
 
-                    ReloadReferences();
+                    ReloadAssets(); // It'll reload references too
                 }
 
                 if (WorldHandler.instance.currentPlayer.inGraffitiGame) {
@@ -200,7 +191,8 @@ namespace DripRemix {
 
         void SetTexture(Check check, int add) {
             if (check == Check.Character) {
-                CHARACTERS[WorldHandler.instance.currentPlayer.character].SetTexture(add);
+                CHARACTER.SetTexture(add);
+                //CHARACTERS[WorldHandler.instance.currentPlayer.character].SetTexture(add);
             }
 
             if (check == Check.Gear) {
@@ -231,17 +223,18 @@ namespace DripRemix {
 
             
             // Character
-            foreach (KeyValuePair<Characters, string> entry in CHARACTERMAPS) {
+            //foreach (KeyValuePair<Characters, string> entry in CHARACTERMAPS) {
                 foreach (Transform child in PLAYER_VISUAL.characterObject.transform) {
                     try {
                         if (child.GetComponent<SkinnedMeshRenderer>()) {
-                            CHARACTERS[entry.Key].REFERENCES.Add(child.gameObject);
+                            CHARACTER.REFERENCES.Add(child.gameObject);
+                            //CHARACTERS[entry.Key].REFERENCES.Add(child.gameObject);
                         }
                     } catch {
                         logError("Character SkinnedMeshRenderer can't be referenced !");
                     }
                 }
-            }
+            //}
 
             // Gears
             try {
@@ -298,18 +291,19 @@ namespace DripRemix {
                     }
                 }
             }
+
+            log("Dig it !");
         }
 
         void ReloadAssets() {
-            foreach (CharacterHandler handler in CHARACTERS.Values)
-                handler.GetAssets();
-
+            // Get Assets
+            CHARACTER.GetAssets();
             foreach (GearHandler handler in GEARS.Values)
                 handler.GetAssets();
-
             PHONES.GetAssets();
             SPRAYCANS.GetAssets();
 
+            // Reload References
             if (WorldHandler.instance?.currentPlayer != null) {
                 ReloadReferences();
             }
@@ -317,19 +311,15 @@ namespace DripRemix {
 
         void ReloadReferences() {
             // Clear References
-            foreach (CharacterHandler handler in CHARACTERS.Values) {
+            CHARACTER.REFERENCES.Clear();
+            foreach (GearHandler handler in GEARS.Values)
                 handler.REFERENCES.Clear();
-            }
-            foreach (GearHandler handler in GEARS.Values) {
-                handler.REFERENCES.Clear();
-            }
             PHONES.REFERENCES.Clear();
             SPRAYCANS.REFERENCES.Clear();
             GetReferences();
-            log("References have been collected !");
 
             // Apply the new Assets
-            CHARACTERS[WorldHandler.instance.currentPlayer.character].Reapply();
+            CHARACTER.Reapply();
             GEARS[WorldHandler.instance.currentPlayer.moveStyleEquipped].Reapply();
             PHONES.Reapply();
             SPRAYCANS.Reapply();
