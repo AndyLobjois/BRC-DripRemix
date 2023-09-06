@@ -159,7 +159,7 @@ namespace DripRemix {
             CheckInput(spraycanKey.Value, Check.Spraycan);
 
             if (Input.GetKeyDown(reloadKey.Value))
-                Reload();
+                ReloadAssets();
         }
 
         void CheckInput(KeyCode key, Check check) {
@@ -219,13 +219,13 @@ namespace DripRemix {
         void GetReferences() {
             try {
                 PLAYER_VISUAL = WorldHandler.instance.currentPlayer.characterVisual;
-            } catch (Exception e) {
+            } catch {
                 logError("Player.CharacterVisual can't be referenced !");
             }
 
             try {
                 PLAYER_PHONE = WorldHandler.instance.currentPlayer.phone;
-            } catch (Exception e) {
+            } catch {
                 logError("Player.Phone can't be referenced !");
             }
 
@@ -237,7 +237,7 @@ namespace DripRemix {
                         if (child.GetComponent<SkinnedMeshRenderer>()) {
                             CHARACTERS[entry.Key].REFERENCES.Add(child.gameObject);
                         }
-                    } catch (Exception e) {
+                    } catch {
                         logError("Character SkinnedMeshRenderer can't be referenced !");
                     }
                 }
@@ -246,14 +246,14 @@ namespace DripRemix {
             // Gears
             try {
                 GEARS[MoveStyle.SKATEBOARD].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.skateboard);
-            } catch (Exception e) {
+            } catch {
                 logError("Skateboard Gameobject can't be referenced !");
             }
 
             try {
                 GEARS[MoveStyle.INLINE].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.skateL);
                 GEARS[MoveStyle.INLINE].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.skateR);
-            } catch (Exception e) {
+            } catch {
                 logError("Inline Gameobjects can't be referenced !");
             }
 
@@ -265,7 +265,7 @@ namespace DripRemix {
                 GEARS[MoveStyle.BMX].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.bmxPedalR);
                 GEARS[MoveStyle.BMX].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.bmxWheelF);
                 GEARS[MoveStyle.BMX].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.bmxWheelR);
-            } catch (Exception e) {
+            } catch {
                 logError("BMX Gameobjects can't be referenced !");
             }
             
@@ -275,7 +275,7 @@ namespace DripRemix {
                 PHONES.REFERENCES.Add(PLAYER_VISUAL.handL.Find("propl/phoneInHand(Clone)").gameObject);
                 PHONES.REFERENCES.Add(PLAYER_PHONE.openPhoneCanvas.transform.Find("PhoneContainerOpen/PhoneOpen").gameObject);
                 PHONES.REFERENCES.Add(PLAYER_PHONE.closedPhoneCanvas.transform.Find("PhoneContainerClosed/PhoneClosed").gameObject);
-            } catch (Exception e) {
+            } catch {
                 logError("Phone Gameobjects can't be referenced !");
             }
 
@@ -283,7 +283,7 @@ namespace DripRemix {
             // Spraycan
             try {
                 SPRAYCANS.REFERENCES.Add(PLAYER_VISUAL.handR.Find("propr/spraycan(Clone)").gameObject);
-            } catch (Exception e) {
+            } catch {
                 logError("Spraycan Gameobject can't be referenced !");
             }
 
@@ -293,14 +293,14 @@ namespace DripRemix {
                 if (go.name == "spraycanCapJunk(Clone)") {
                     try {
                         SPRAYCANS.REFERENCES.Add(go);
-                    } catch (Exception e) {
+                    } catch {
                         logError("Spraycan Caps Gameobjects can't be referenced !");
                     }
                 }
             }
         }
 
-        void Reload() {
+        void ReloadAssets() {
             foreach (CharacterHandler handler in CHARACTERS.Values)
                 handler.GetAssets();
 
@@ -310,8 +310,7 @@ namespace DripRemix {
             PHONES.GetAssets();
             SPRAYCANS.GetAssets();
 
-            if (WorldHandler.instance?.currentPlayer != null)
-            {
+            if (WorldHandler.instance?.currentPlayer != null) {
                 ReloadReferences();
             }
         }

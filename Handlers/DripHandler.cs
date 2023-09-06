@@ -19,6 +19,7 @@ namespace DripRemix.Handlers
         public int INDEX_MESH {
             get {
                 var currentChar = WorldHandler.instance?.currentPlayer?.character;
+                Main.log("INDEX MESH " + currentChar.ToString() + " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
                 return Main.Instance?.SavedIndexes[currentChar ?? Characters.NONE].Value.indexes[(int)type].Mesh ?? 0;
             }
             set {
@@ -36,6 +37,7 @@ namespace DripRemix.Handlers
         {
             get {
                 var currentChar = WorldHandler.instance?.currentPlayer?.character;
+                Main.log("INDEX TEX " + currentChar.ToString() + " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
                 return Main.Instance?.SavedIndexes[currentChar ?? Characters.NONE].Value.indexes[(int)type].Texture ?? 0;
             }
             set {
@@ -138,8 +140,8 @@ namespace DripRemix.Handlers
         virtual public void SetTexture(int indexMod) { }
 
         virtual public void Reapply () {
-            //SetMesh(0);
-            //SetTexture(0);
+            SetMesh(0);
+            SetTexture(0);
         }
     }
 }
