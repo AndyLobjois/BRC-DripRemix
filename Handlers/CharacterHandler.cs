@@ -27,8 +27,7 @@ namespace DripRemix.Handlers {
             foreach (DirectoryInfo folder in folders) {
                 FileInfo[] files = folder.GetFiles("*", SearchOption.TopDirectoryOnly);
 
-                string name = "";
-                string author = "";
+                Dictionary<string, string> parameters = new Dictionary<string, string>();
                 Dictionary<string, Mesh> meshes = new Dictionary<string, Mesh>();
                 List<Texture> textures = new List<Texture>();
                 List<Texture> emissions = new List<Texture>();
@@ -36,9 +35,7 @@ namespace DripRemix.Handlers {
                 foreach (FileInfo file in files) {
                     // Info
                     if (file.Extension == ".txt") {
-                        string[] lines = File.ReadAllLines(file.FullName);
-                        name = lines[0].Split('=')[1];
-                        author = lines[1].Split('=')[1];
+                        parameters = GetParameters(file);
                     }
 
                     // Meshes → No Mesh replacement for now, so it's useless
@@ -66,7 +63,7 @@ namespace DripRemix.Handlers {
                     }
                 }
 
-                FOLDERS.Add(new AssetFolder(name, author, meshes, textures, emissions));
+                FOLDERS.Add(new AssetFolder(meshes, textures, emissions, parameters));
             }
 
             // Log

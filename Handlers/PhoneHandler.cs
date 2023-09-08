@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Globalization;
+using UnityEngine;
 using UnityEngine.UI;
 using Reptile;
 
@@ -13,11 +14,13 @@ namespace DripRemix.Handlers {
         override public void GetAssets() {
             base.GetAssets();
 
+            SetCameras();
+
             // Log
             if (FOLDERS.Count > 0) {
                 string _names = "";
                 for (int i = 0; i < FOLDERS.Count; i++)
-                    _names += $"\n   • {FOLDERS[i].name} by {FOLDERS[i].author}";
+                    _names += $"\n   • {FOLDERS[i].parameters["name"]} by {FOLDERS[i].parameters["author"]}";
                 Main.log($"{FOLDERS.Count} Phone(s) loaded ! {_names}\n");
             }
         }
@@ -45,7 +48,7 @@ namespace DripRemix.Handlers {
                             _ref.transform.localScale = new Vector3(1, 1, -1);
                         }
                     } catch {
-                        Main.logError($"Missing mesh : {FOLDERS[INDEX_MESH].name}/{ _ref.name}");
+                        Main.logError($"Missing mesh : {FOLDERS[INDEX_MESH].parameters["name"]}/{ _ref.name}");
                     }
                 }
             }
@@ -71,11 +74,52 @@ namespace DripRemix.Handlers {
                             _ref.GetComponent<MeshRenderer>().material.SetTexture("_Emission", FOLDERS[INDEX_MESH].emissions[INDEX_TEXTURE]);
                         }
                     } catch {
-                        Main.logError($"Missing texture : {FOLDERS[INDEX_MESH].name}/{ _ref.name}");
+                        Main.logError($"Missing texture : {FOLDERS[INDEX_MESH].parameters["name"]}/{ _ref.name}");
                     }
                 }
             }
         }
 
+        public void SetCameras() {
+            CharacterVisual visual = WorldHandler.instance.currentPlayer.characterVisual;
+            GameObject screen = visual.handL.Find("propl/phoneInHand(Clone)/Screen").gameObject;
+            GameObject cameraFront = visual.handL.Find("propl/phoneInHand(Clone)/phoneCameras/frontCamera").gameObject;
+            GameObject cameraRear = visual.handL.Find("propl/phoneInHand(Clone)/phoneCameras/rearCamera").gameObject;
+            string[] split;
+
+            // Screen
+            screen.SetActive(false);
+
+            // Set Camera Front Position/Rotation/FOV
+            cameraFront.GetComponent<Camera>().fieldOfView = float.Parse(FOLDERS[INDEX_MESH].parameters["cameraFront_fov"]);
+            split = FOLDERS[INDEX_MESH].parameters["cameraFront_position"].Split(',');
+            cameraFront.transform.localPosition = new Vector3(
+                float.Parse(split[0], CultureInfo.InvariantCulture.NumberFormat),
+                float.Parse(split[1], CultureInfo.InvariantCulture.NumberFormat),
+                float.Parse(split[2], CultureInfo.InvariantCulture.NumberFormat)
+            );
+            split = FOLDERS[INDEX_MESH].parameters["cameraFront_rotation"].Split(',');
+            cameraFront.transform.localEulerAngles = new Vector3(
+                float.Parse(split[0], CultureInfo.InvariantCulture.NumberFormat),
+                float.Parse(split[1], CultureInfo.InvariantCulture.NumberFormat),
+                float.Parse(split[2], CultureInfo.InvariantCulture.NumberFormat)
+            );
+
+
+            // Set Camera Rear Position/Rotation/FOV
+            cameraRear.GetComponent<Camera>().fieldOfView = float.Parse(FOLDERS[INDEX_MESH].parameters["cameraRear_fov"]);
+            split = FOLDERS[INDEX_MESH].parameters["cameraRear_position"].Split(',');
+            cameraRear.transform.localPosition = new Vector3(
+                float.Parse(split[0], CultureInfo.InvariantCulture.NumberFormat),
+                float.Parse(split[1], CultureInfo.InvariantCulture.NumberFormat),
+                float.Parse(split[2], CultureInfo.InvariantCulture.NumberFormat)
+            );
+            split = FOLDERS[INDEX_MESH].parameters["cameraRear_rotation"].Split(',');
+            cameraRear.transform.localEulerAngles = new Vector3(
+                float.Parse(split[0], CultureInfo.InvariantCulture.NumberFormat),
+                float.Parse(split[1], CultureInfo.InvariantCulture.NumberFormat),
+                float.Parse(split[2], CultureInfo.InvariantCulture.NumberFormat)
+            );
+        }
     }
 }

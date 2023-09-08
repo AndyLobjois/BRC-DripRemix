@@ -68,20 +68,17 @@ namespace DripRemix.Handlers
                 {
                     FileInfo[] files = folder.GetFiles("*", SearchOption.TopDirectoryOnly);
 
-                    string name = "";
-                    string author = "";
                     Dictionary<string, Mesh> meshes = new Dictionary<string, Mesh>();
                     List<Texture> textures = new List<Texture>();
                     List<Texture> emissions = new List<Texture>();
+                    Dictionary<string, string> parameters = new Dictionary<string, string>();
                     List<Texture> sprites1 = new List<Texture>();
                     List<Texture> sprites2 = new List<Texture>();
 
                     foreach (FileInfo file in files) {
                         // Info
                         if (file.Extension == ".txt") {
-                            string[] lines = File.ReadAllLines(file.FullName);
-                            name = lines[0].Split('=')[1];
-                            author = lines[1].Split('=')[1];
+                            parameters = GetParameters(file);
                         }
 
                         // Meshes
@@ -123,9 +120,21 @@ namespace DripRemix.Handlers
                         }
                     }
 
-                    FOLDERS.Add(new AssetFolder(name, author, meshes, textures, emissions, sprites1, sprites2));
+                    FOLDERS.Add(new AssetFolder(meshes, textures, emissions, parameters, sprites1, sprites2));
                 }
             }   
+        }
+
+        public Dictionary<string, string> GetParameters(FileInfo file) {
+
+            Dictionary<string, string> _parameters = new Dictionary<string, string>();
+            string[] _lines = File.ReadAllLines(file.FullName);
+            foreach (string _line in _lines) {
+                string[] _split = _line.Split('=');
+                _parameters.Add(_split[0], _split[1]);
+            }
+
+            return _parameters;
         }
 
         virtual public void SetMesh(int indexMod) { }
