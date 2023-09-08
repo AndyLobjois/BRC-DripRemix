@@ -48,3 +48,4 @@ Check the [**Thunderstore Page**](https://lethal-league-blaze.thunderstore.io/c/
 - [1.0.1] Fix Missing Folders error, Fix PhoneClosed that doesn't show up, Color Spray added to GraffitiGame
 - [1.0.2] Fix Felix missing SkinnedMeshRenderer reference
 - [1.0.3] Fix Custom Char. Compatibility, Save System Fixed, Missing refs handlers (logError), Phone "rotation" fixed, New Shortcut for Spraycan (E)
+- [1.0.4] Fix Phone Cameras + New feature: cameras pos/rot/fov can be changed from info.txt
