@@ -8,8 +8,7 @@ using OBJImporter;
 
 namespace DripRemix.Handlers
 {
-    public class DripHandler
-    {
+    public class DripHandler {
 
         public List<AssetFolder> FOLDERS = new List<AssetFolder>();
         public List<GameObject> REFERENCES = new List<GameObject>();
@@ -120,7 +119,7 @@ namespace DripRemix.Handlers
                         }
                     }
 
-                    FOLDERS.Add(new AssetFolder(meshes, textures, emissions, parameters, sprites1, sprites2));
+                    FOLDERS.Add(new AssetFolder(folder, meshes, textures, emissions, parameters, sprites1, sprites2));
                 }
             }   
         }
