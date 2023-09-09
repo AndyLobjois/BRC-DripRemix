@@ -22,7 +22,7 @@ namespace DripRemix.Handlers {
                 string _names = "";
                 for (int i = 0; i < FOLDERS.Count; i++)
                     _names += $"\n   • {FOLDERS[i].parameters["name"]} by {FOLDERS[i].parameters["author"]}";
-                Main.log($"{FOLDERS.Count} {movestyleName}(s) loaded ! {_names}\n");
+                Main.Log.LogMessage($"{FOLDERS.Count} {movestyleName}(s) loaded ! {_names}\n");
             }    
         }
 
@@ -43,7 +43,7 @@ namespace DripRemix.Handlers {
                             try {
                                 particleBuffer = FOLDERS[INDEX_MESH].meshes["particle"];
                             } catch {
-                                Main.logError($"Missing mesh : {FOLDERS[INDEX_MESH].parameters["name"]}/particle.");
+                                Main.Log.LogError($"Missing mesh : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}/particle");
                             }
                         }
 
@@ -66,7 +66,7 @@ namespace DripRemix.Handlers {
                             }
                         }
                     } catch {
-                        Main.log($"Missing mesh: {FOLDERS[INDEX_MESH].parameters["name"]}/{ _ref.name}"); // If it's triggered, it'll be triggered twice per reference (mesh/particle)
+                        Main.Log.LogError($"Missing mesh: {FOLDERS[INDEX_MESH].parameters["name"]}/{ _ref.name}"); // If it's triggered, it'll be triggered twice per reference (mesh/particle)
                     }
                 }
             }
@@ -84,7 +84,7 @@ namespace DripRemix.Handlers {
                         _ref.GetComponent<MeshRenderer>().material.mainTexture = FOLDERS[INDEX_MESH].textures[INDEX_TEXTURE];
                         _ref.GetComponent<MeshRenderer>().material.SetTexture("_Emission", FOLDERS[INDEX_MESH].emissions[INDEX_TEXTURE]);
                     } catch {
-                        Main.logError($"Missing texture : {FOLDERS[INDEX_MESH].parameters["name"]}/{_ref.name}");
+                        Main.Log.LogError($"Missing texture : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}/{_ref.name}");
                     }
                 }
             }

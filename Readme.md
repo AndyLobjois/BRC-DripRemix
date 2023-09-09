@@ -9,6 +9,7 @@
 - *`Custom Color Spray` → Takes bottom left pixel from the texture*
 - *`Advance Texture Options` → Emission maps for everything and Phone UI*
 - *`Quick Reload In-game`*
+- *`Phone Cameras Position/Rotation/FOV Editable`*
 - *`Easy Skins/Models Installation & Edit` → Drop .obj and .png/.jpg inside a folder, **no Unity required !***
 - *`Custom Binding`*
 - *`Save System per Character` → Skin/Model of Character, Gears, Phone and Spraycan*
@@ -48,3 +49,5 @@ Check the [**Thunderstore Page**](https://lethal-league-blaze.thunderstore.io/c/
 - [1.0.1] Fix Missing Folders error, Fix PhoneClosed that doesn't show up, Color Spray added to GraffitiGame
 - [1.0.2] Fix Felix missing SkinnedMeshRenderer reference
 - [1.0.3] Fix Custom Char. Compatibility, Save System Fixed, Missing refs handlers (logError), Phone "rotation" fixed, New Shortcut for Spraycan (E)
+- [1.0.4] Fix Phone Cameras + New feature: cameras pos/rot/fov can be changed from info.txt
+- [1.0.5] Preventing errors-lock after wrong installation/updates from user with better logs and being more permissive. Also Custom Character Replacement are now detected and you can force the texture override from the info.txt of the Character Folder.

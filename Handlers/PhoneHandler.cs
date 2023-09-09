@@ -14,14 +14,24 @@ namespace DripRemix.Handlers {
         override public void GetAssets() {
             base.GetAssets();
 
-            SetCameras();
+            try {
+                SetCameras();
+            } catch {
+                Main.Log.LogError($"Can't set Phone Cameras. Please, verify the parameters of {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}\\info.txt");
+            }
 
             // Log
             if (FOLDERS.Count > 0) {
-                string _names = "";
-                for (int i = 0; i < FOLDERS.Count; i++)
-                    _names += $"\n   • {FOLDERS[i].parameters["name"]} by {FOLDERS[i].parameters["author"]}";
-                Main.log($"{FOLDERS.Count} Phone(s) loaded ! {_names}\n");
+                string _descriptions = "";
+                for (int i = 0; i < FOLDERS.Count; i++) {
+                    try {
+                        _descriptions += FOLDERS[i].description();
+                    } catch {
+                        Main.Log.LogError($"Missing info : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}\\info.txt");
+                    }
+                }
+
+                Main.Log.LogMessage($"{FOLDERS.Count} Phone(s) loaded ! {_descriptions}\n");
             }
         }
 
@@ -48,7 +58,7 @@ namespace DripRemix.Handlers {
                             _ref.transform.localScale = new Vector3(1, 1, -1);
                         }
                     } catch {
-                        Main.logError($"Missing mesh : {FOLDERS[INDEX_MESH].parameters["name"]}/{ _ref.name}");
+                        Main.Log.LogError($"Missing mesh : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}/{ _ref.name}");
                     }
                 }
             }
@@ -74,7 +84,7 @@ namespace DripRemix.Handlers {
                             _ref.GetComponent<MeshRenderer>().material.SetTexture("_Emission", FOLDERS[INDEX_MESH].emissions[INDEX_TEXTURE]);
                         }
                     } catch {
-                        Main.logError($"Missing texture : {FOLDERS[INDEX_MESH].parameters["name"]}/{ _ref.name}");
+                        Main.Log.LogError($"Missing texture : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}/{ _ref.name}");
                     }
                 }
             }
@@ -104,7 +114,6 @@ namespace DripRemix.Handlers {
                 float.Parse(split[1], CultureInfo.InvariantCulture.NumberFormat),
                 float.Parse(split[2], CultureInfo.InvariantCulture.NumberFormat)
             );
-
 
             // Set Camera Rear Position/Rotation/FOV
             cameraRear.GetComponent<Camera>().fieldOfView = float.Parse(FOLDERS[INDEX_MESH].parameters["cameraRear_fov"]);

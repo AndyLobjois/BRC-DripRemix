@@ -47,15 +47,14 @@ namespace DripRemix {
         public Phone PLAYER_PHONE;
         public enum Check { Character, Gear, Phone, Spraycan }
 
-        //public Dictionary<Characters, CharacterHandler> CHARACTERS = new Dictionary<Characters, CharacterHandler>();
         public CharacterHandler CHARACTER;
         public Dictionary<MoveStyle, GearHandler> GEARS = new Dictionary<MoveStyle, GearHandler>();
         public PhoneHandler PHONES;
         public SpraycanHandler SPRAYCANS;
         //public GraffitiHandler GRAFFITI = new GraffitiHandler();
 
+        public Dictionary<string, Material> MATERIALS = new Dictionary<string, Material>();
         public Dictionary<Characters, ConfigEntry<HandlersConfig>> SavedIndexes = new Dictionary<Characters, ConfigEntry<HandlersConfig>>();
-
         public static Dictionary<Characters, string> CHARACTERMAPS = new Dictionary<Characters, string>() {
             // Added by Characters.list order
             [Characters.girl1] = "Vinyl",
@@ -126,10 +125,13 @@ namespace DripRemix {
                     try {
                         PLAYER = WorldHandler.instance?.currentPlayer.gameObject;
                     } catch {
-                        logError("Player can't be referenced !");
+                        Log.LogError("Player can't be referenced !");
                     }
 
                     ReloadAssets(); // It'll reload references too
+
+                    // Init Materials
+                    InitMaterials();
                 }
 
                 if (WorldHandler.instance.currentPlayer.inGraffitiGame) {
@@ -212,13 +214,13 @@ namespace DripRemix {
             try {
                 PLAYER_VISUAL = WorldHandler.instance.currentPlayer.characterVisual;
             } catch {
-                logError("Player.CharacterVisual can't be referenced !");
+                Log.LogError("Player.CharacterVisual can't be referenced !");
             }
 
             try {
                 PLAYER_PHONE = WorldHandler.instance.currentPlayer.phone;
             } catch {
-                logError("Player.Phone can't be referenced !");
+                Log.LogError("Player.Phone can't be referenced !");
             }
 
             
@@ -231,7 +233,7 @@ namespace DripRemix {
                             //CHARACTERS[entry.Key].REFERENCES.Add(child.gameObject);
                         }
                     } catch {
-                        logError("Character SkinnedMeshRenderer can't be referenced !");
+                        Log.LogError("Character SkinnedMeshRenderer can't be referenced !");
                     }
                 }
             //}
@@ -240,14 +242,14 @@ namespace DripRemix {
             try {
                 GEARS[MoveStyle.SKATEBOARD].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.skateboard);
             } catch {
-                logError("Skateboard Gameobject can't be referenced !");
+                Log.LogError("Skateboard Gameobject can't be referenced !");
             }
 
             try {
                 GEARS[MoveStyle.INLINE].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.skateL);
                 GEARS[MoveStyle.INLINE].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.skateR);
             } catch {
-                logError("Inline Gameobjects can't be referenced !");
+                Log.LogError("Inline Gameobjects can't be referenced !");
             }
 
             try {
@@ -259,7 +261,7 @@ namespace DripRemix {
                 GEARS[MoveStyle.BMX].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.bmxWheelF);
                 GEARS[MoveStyle.BMX].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.bmxWheelR);
             } catch {
-                logError("BMX Gameobjects can't be referenced !");
+                Log.LogError("BMX Gameobjects can't be referenced !");
             }
             
 
@@ -269,7 +271,7 @@ namespace DripRemix {
                 PHONES.REFERENCES.Add(PLAYER_PHONE.openPhoneCanvas.transform.Find("PhoneContainerOpen/PhoneOpen").gameObject);
                 PHONES.REFERENCES.Add(PLAYER_PHONE.closedPhoneCanvas.transform.Find("PhoneContainerClosed/PhoneClosed").gameObject);
             } catch {
-                logError("Phone Gameobjects can't be referenced !");
+                Log.LogError("Phone Gameobjects can't be referenced !");
             }
 
 
@@ -277,7 +279,7 @@ namespace DripRemix {
             try {
                 SPRAYCANS.REFERENCES.Add(PLAYER_VISUAL.handR.Find("propr/spraycan(Clone)").gameObject);
             } catch {
-                logError("Spraycan Gameobject can't be referenced !");
+                Log.LogError("Spraycan Gameobject can't be referenced !");
             }
 
             // Spraycan Caps
@@ -287,12 +289,12 @@ namespace DripRemix {
                     try {
                         SPRAYCANS.REFERENCES.Add(go);
                     } catch {
-                        logError("Spraycan Caps Gameobjects can't be referenced !");
+                        Log.LogError("Spraycan Caps Gameobjects can't be referenced !");
                     }
                 }
             }
 
-            log("Dig it !");
+            Log.LogMessage("Dig it !");
         }
 
         void ReloadAssets() {
@@ -325,12 +327,16 @@ namespace DripRemix {
             SPRAYCANS.Reapply();
         }
 
-        static public void log(string message) {
-            Log.LogMessage($"{message}");
-        }
+        void InitMaterials() {
+            //Material mat = new Material(Shader.Find("Unlit/Transparent"));
 
-        static public void logError(string message) {
-            Log.LogError($"{message}");
+            //_MYLIST = GameObject.FindObjectsOfType<Material>();
+            
+            //MATERIALS.Add("AmbientCharacter", new Material(Shader.Find("Unlit/Transparent"));
+            //MATERIALS.Add("AmbientEnvironment", new Material(Shader.Find("Reptile/Ambient Environment")));
+            //MATERIALS.Add("AmbientEnvironmentCutout", new Material(Shader.Find("Reptile/Ambient Environment Cutout")));
+            //MATERIALS.Add("UnlitTransparent", new Material(Shader.Find("Unlit/Transparent")));
+            //MATERIALS.Add("Standard", new Material(Shader.Find("Standard")));
         }
     }
 }

@@ -17,7 +17,7 @@ namespace DripRemix.Handlers {
                 string _names = "";
                 for (int i = 0; i < FOLDERS.Count; i++)
                     _names += $"\n   • {FOLDERS[i].parameters["name"]} by {FOLDERS[i].parameters["author"]}";
-                Main.log($"{FOLDERS.Count} Spraycan(s) loaded ! {_names}\n");
+                Main.Log.LogMessage($"{FOLDERS.Count} Spraycan(s) loaded ! {_names}\n");
             }
         }
 
@@ -39,7 +39,7 @@ namespace DripRemix.Handlers {
                         // Reload Texture (It'll avoid out of range textures[])
                         SetTexture(0);
                     } catch {
-                        Main.logError($"Missing mesh : {FOLDERS[INDEX_MESH].parameters["name"]}/{ _ref.name}");
+                        Main.Log.LogError($"Missing mesh : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}/{ _ref.name}");
                     }
                 }
             }
@@ -64,7 +64,7 @@ namespace DripRemix.Handlers {
                             _ref.transform.GetChild(0).GetComponent<ParticleSystemRenderer>().material.color = _tex.GetPixel(0, 0);
                         }
                     } catch {
-                        Main.logError($"Missing texture : {FOLDERS[INDEX_MESH].parameters["name"]}/{ _ref.name}");
+                        Main.Log.LogError($"Missing texture : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}/{ _ref.name}");
                     }
                 }
             }
@@ -102,7 +102,7 @@ namespace DripRemix.Handlers {
                     }
                 }
             } catch {
-                Main.logError($"GraffitiEffect issues !");
+                Main.Log.LogError($"GraffitiEffect issues !");
             }
         }
 

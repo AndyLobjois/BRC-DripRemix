@@ -36,6 +36,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AssetFolder.cs" />
+    <Compile Include="DripHandler.cs" />
+    <Compile Include="HandlersConfig.cs" />
     <Compile Include="Handlers\CharacterHandler.cs" />
     <Compile Include="Handlers\GraffitiHandler.cs" />
     <Compile Include="Infos.cs" />
@@ -48,8 +50,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Handlers\GearHandler.cs" />
     <Compile Include="Handlers\SpraycanHandler.cs" />
-    <Compile Include="Handlers\DripHandler.cs" />
-    <Compile Include="Handlers\HandlersConfig.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
@@ -87,7 +87,6 @@
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>libs\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
-      <Aliases>global</Aliases>
     </Reference>
     <Reference Include="UnityEngine.ImageConversionModule">
       <HintPath>libs\UnityEngine.ImageConversionModule.dll</HintPath>
