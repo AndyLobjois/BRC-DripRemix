@@ -16,14 +16,7 @@ namespace DripRemix.Handlers {
 
         override public void GetAssets() {
             base.GetAssets();
-
-            // Log
-            if (FOLDERS.Count > 0) {
-                string _names = "";
-                for (int i = 0; i < FOLDERS.Count; i++)
-                    _names += $"\n   • {FOLDERS[i].parameters["name"]} by {FOLDERS[i].parameters["author"]}";
-                Main.Log.LogMessage($"{FOLDERS.Count} {movestyleName}(s) loaded ! {_names}\n");
-            }    
+            LoadDetails(MOVESTYLE.ToString().ToLower().FirstCharToUpper(), null); 
         }
 
         override public void SetMesh(int indexMod) {
@@ -34,39 +27,42 @@ namespace DripRemix.Handlers {
 
                 // Change every reference by the new model
                 foreach (GameObject _ref in REFERENCES) {
+                    Mesh meshBuffer = null;
+                    Mesh particleBuffer = null;
+
+                    // Load Mesh
                     try {
-                        // Load Meshes
-                        Mesh meshBuffer = FOLDERS[INDEX_MESH].meshes[_ref.name];
-                        Mesh particleBuffer = null;
-
-                        if (MOVESTYLE == MoveStyle.BMX) {
-                            try {
-                                particleBuffer = FOLDERS[INDEX_MESH].meshes["particle"];
-                            } catch {
-                                Main.Log.LogError($"Missing mesh : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}/particle");
-                            }
-                        }
-
-                        // Assign
-                        _ref.GetComponent<MeshFilter>().mesh = meshBuffer;
-
-                        // Reload Texture (It'll avoid out of range textures[])
-                        SetTexture(0);
-
-                        // Particle
-                        if (_ref.name == "skateRight(Clone)" || _ref.name == "skateLeft(Clone)" || _ref.name == "skateboard(Clone)") {
-                            if (_ref.transform.childCount > 0) { // Detect ParticleSystem
-                                _ref.transform.GetChild(0).GetComponent<ParticleSystemRenderer>().mesh = meshBuffer; //IMPORTANT: Mesh need to have Read/Write enable in the Import Settings of Unity
-                                _ref.transform.GetChild(0).GetComponent<ParticleSystem>().Play();
-                            }
-                        } else if (_ref.name == "BmxFrame(Clone)") { // Because BMX is in multiple parts, the particle system use 1 specific merged mesh
-                            if (_ref.transform.childCount > 0) { // Detect ParticleSystem
-                                _ref.transform.GetChild(0).GetComponent<ParticleSystemRenderer>().mesh = particleBuffer; //IMPORTANT: Mesh need to have Read/Write enable in the Import Settings of Unity
-                                _ref.transform.GetChild(0).GetComponent<ParticleSystem>().Play();
-                            }
-                        }
+                        meshBuffer = FOLDERS[INDEX_MESH].meshes[_ref.name];
                     } catch {
-                        Main.Log.LogError($"Missing mesh: {FOLDERS[INDEX_MESH].parameters["name"]}/{ _ref.name}"); // If it's triggered, it'll be triggered twice per reference (mesh/particle)
+                        Main.Log.LogError($"Missing mesh : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}\\{_ref.name}");
+                    }
+
+                    // Load Particle Mesh
+                    if (MOVESTYLE == MoveStyle.BMX) {
+                        try {
+                            particleBuffer = FOLDERS[INDEX_MESH].meshes["particle"];
+                        } catch {
+                            Main.Log.LogError($"Missing mesh : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}\\particle");
+                        }
+                    }
+
+                    // Assign
+                    _ref.GetComponent<MeshFilter>().mesh = meshBuffer;
+
+                    // Reload Texture (It'll avoid out of range textures[])
+                    SetTexture(0);
+
+                    // Particle
+                    if (_ref.name == "skateRight(Clone)" || _ref.name == "skateLeft(Clone)" || _ref.name == "skateboard(Clone)") {
+                        if (_ref.transform.childCount > 0) { // Detect ParticleSystem
+                            _ref.transform.GetChild(0).GetComponent<ParticleSystemRenderer>().mesh = meshBuffer; //IMPORTANT: Mesh need to have Read/Write enable in the Import Settings of Unity
+                            _ref.transform.GetChild(0).GetComponent<ParticleSystem>().Play();
+                        }
+                    } else if (_ref.name == "BmxFrame(Clone)") { // Because BMX is in multiple parts, the particle system use 1 specific merged mesh
+                        if (_ref.transform.childCount > 0) { // Detect ParticleSystem
+                            _ref.transform.GetChild(0).GetComponent<ParticleSystemRenderer>().mesh = particleBuffer; //IMPORTANT: Mesh need to have Read/Write enable in the Import Settings of Unity
+                            _ref.transform.GetChild(0).GetComponent<ParticleSystem>().Play();
+                        }
                     }
                 }
             }
@@ -84,7 +80,7 @@ namespace DripRemix.Handlers {
                         _ref.GetComponent<MeshRenderer>().material.mainTexture = FOLDERS[INDEX_MESH].textures[INDEX_TEXTURE];
                         _ref.GetComponent<MeshRenderer>().material.SetTexture("_Emission", FOLDERS[INDEX_MESH].emissions[INDEX_TEXTURE]);
                     } catch {
-                        Main.Log.LogError($"Missing texture : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}/{_ref.name}");
+                        Main.Log.LogError($"Missing texture : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}\\{_ref.name}");
                     }
                 }
             }

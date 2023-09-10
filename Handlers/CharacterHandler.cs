@@ -97,12 +97,7 @@ namespace DripRemix.Handlers {
             }
 
             // Log
-            if (FOLDERS[0].textures.Count > 0) {
-                string _names = "";
-                for (int i = 0; i < FOLDERS[0].textures.Count; i++)
-                    _names += $"\n   • {FOLDERS[0].textures[i].name}";
-                Main.Log.LogMessage($"{FOLDERS[0].textures.Count} Skin(s) for {CharacterToString(CURRENTCHARACTER)} loaded ! {_names}\n");
-            }
+            LoadDetails("CHARACTER", CharacterToString(CURRENTCHARACTER));
         }
 
         override public void SetTexture(int add) {

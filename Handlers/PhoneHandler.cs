@@ -13,25 +13,12 @@ namespace DripRemix.Handlers {
 
         override public void GetAssets() {
             base.GetAssets();
+            LoadDetails("Phone", null);
 
             try {
                 SetCameras();
             } catch {
                 Main.Log.LogError($"Can't set Phone Cameras. Please, verify the parameters of {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}\\info.txt");
-            }
-
-            // Log
-            if (FOLDERS.Count > 0) {
-                string _descriptions = "";
-                for (int i = 0; i < FOLDERS.Count; i++) {
-                    try {
-                        _descriptions += FOLDERS[i].description();
-                    } catch {
-                        Main.Log.LogError($"Missing info : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}\\info.txt");
-                    }
-                }
-
-                Main.Log.LogMessage($"{FOLDERS.Count} Phone(s) loaded ! {_descriptions}\n");
             }
         }
 
@@ -58,7 +45,7 @@ namespace DripRemix.Handlers {
                             _ref.transform.localScale = new Vector3(1, 1, -1);
                         }
                     } catch {
-                        Main.Log.LogError($"Missing mesh : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}/{ _ref.name}");
+                        Main.Log.LogError($"Missing mesh : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}\\{ _ref.name}");
                     }
                 }
             }
@@ -84,7 +71,7 @@ namespace DripRemix.Handlers {
                             _ref.GetComponent<MeshRenderer>().material.SetTexture("_Emission", FOLDERS[INDEX_MESH].emissions[INDEX_TEXTURE]);
                         }
                     } catch {
-                        Main.Log.LogError($"Missing texture : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}/{ _ref.name}");
+                        Main.Log.LogError($"Missing texture : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}\\{ _ref.name}");
                     }
                 }
             }

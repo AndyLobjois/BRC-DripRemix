@@ -51,3 +51,4 @@ Check the [**Thunderstore Page**](https://lethal-league-blaze.thunderstore.io/c/
 - [1.0.3] Fix Custom Char. Compatibility, Save System Fixed, Missing refs handlers (logError), Phone "rotation" fixed, New Shortcut for Spraycan (E)
 - [1.0.4] Fix Phone Cameras + New feature: cameras pos/rot/fov can be changed from info.txt
 - [1.0.5] Preventing errors-lock after wrong installation/updates from user with better logs and being more permissive. Also Custom Character Replacement are now detected and you can force the texture override from the info.txt of the Character Folder.
+- [1.0.6] EVEN BETTER LOGS and preventing the plugin from stopping

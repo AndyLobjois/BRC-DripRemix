@@ -294,7 +294,7 @@ namespace DripRemix {
                 }
             }
 
-            Log.LogMessage("Dig it !");
+            Log.LogMessage($"————————————————————————————————————————— {RandomLine()}");
         }
 
         void ReloadAssets() {
@@ -337,6 +337,32 @@ namespace DripRemix {
             //MATERIALS.Add("AmbientEnvironmentCutout", new Material(Shader.Find("Reptile/Ambient Environment Cutout")));
             //MATERIALS.Add("UnlitTransparent", new Material(Shader.Find("Unlit/Transparent")));
             //MATERIALS.Add("Standard", new Material(Shader.Find("Standard")));
+        }
+
+        string RandomLine() {
+            string[] lines = new string[] {
+                "Dig it !",
+                "Yo What's up ?",
+                "OPERATEOPERATEOPERATE",
+                "ASS ASS ASS",
+                "You Degenerate",
+                "Better Watch Ya Back !",
+                "Get REP man",
+                "All City King !",
+                "Pretty Boy",
+                "Easy Prey",
+                "Back to the daily grind !",
+                "How could I looose ?",
+                "The critical error, was you.",
+                "Have a Jawbreaker !",
+                "Feel the Beat !",
+                "Let's Roll !",
+                "YAAAAAHH",
+                "So sorry. It's just... business.",
+                "Shiny Cuff !",
+                "Let's Boogie !"
+            };
+            return lines[UnityEngine.Random.Range(0, lines.Length)];
         }
     }
 }

@@ -11,14 +11,7 @@ namespace DripRemix.Handlers {
 
         override public void GetAssets() {
             base.GetAssets();
-
-            // Log
-            if (FOLDERS.Count > 0) {
-                string _names = "";
-                for (int i = 0; i < FOLDERS.Count; i++)
-                    _names += $"\n   • {FOLDERS[i].parameters["name"]} by {FOLDERS[i].parameters["author"]}";
-                Main.Log.LogMessage($"{FOLDERS.Count} Spraycan(s) loaded ! {_names}\n");
-            }
+            LoadDetails("Spraycan", null);
         }
 
         override public void SetMesh(int indexMod) {
@@ -39,7 +32,7 @@ namespace DripRemix.Handlers {
                         // Reload Texture (It'll avoid out of range textures[])
                         SetTexture(0);
                     } catch {
-                        Main.Log.LogError($"Missing mesh : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}/{ _ref.name}");
+                        Main.Log.LogError($"Missing mesh : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}\\{ _ref.name}");
                     }
                 }
             }
@@ -64,7 +57,7 @@ namespace DripRemix.Handlers {
                             _ref.transform.GetChild(0).GetComponent<ParticleSystemRenderer>().material.color = _tex.GetPixel(0, 0);
                         }
                     } catch {
-                        Main.Log.LogError($"Missing texture : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}/{ _ref.name}");
+                        Main.Log.LogError($"Missing texture : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}\\{ _ref.name}");
                     }
                 }
             }

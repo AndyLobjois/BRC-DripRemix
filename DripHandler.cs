@@ -129,11 +129,42 @@ namespace DripRemix.Handlers
             Dictionary<string, string> _parameters = new Dictionary<string, string>();
             string[] _lines = File.ReadAllLines(file.FullName);
             foreach (string _line in _lines) {
-                string[] _split = _line.Split('=');
-                _parameters.Add(_split[0], _split[1]);
+                if (_line.Contains("=")) {
+                    string[] _split = _line.Split('=');
+                    _parameters.Add(_split[0], _split[1]);
+                }
             }
 
             return _parameters;
+        }
+
+        public void LoadDetails(string typeName, string characterName) {
+            if (typeName == "CHARACTER") {
+                if (FOLDERS[0].textures.Count > 0) {
+                    string _names = "";
+                    for (int i = 0; i < FOLDERS[0].textures.Count; i++) {
+                        try {
+                            _names += $"\n   • {FOLDERS[0].textures[i].name}";
+                        } catch {
+                            Main.Log.LogError($"Missing/Wrong info.txt : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}\\info.txt");
+                        }
+                    }
+                    Main.Log.LogMessage($"{FOLDERS[0].textures.Count} Skin(s) for {characterName} loaded ! {_names}\n");
+                }
+            } else {
+                if (FOLDERS.Count > 0) {
+                    string _descriptions = "";
+                    for (int i = 0; i < FOLDERS.Count; i++) {
+                        try {
+                            _descriptions += FOLDERS[i].description();
+                        } catch {
+                            Main.Log.LogError($"Missing/Wrong info.txt : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}\\info.txt");
+                        }
+                    }
+
+                    Main.Log.LogMessage($"{FOLDERS.Count} {typeName}(s) loaded ! {_descriptions}\n");
+                }
+            } 
         }
 
         virtual public void SetMesh(int indexMod) { }
