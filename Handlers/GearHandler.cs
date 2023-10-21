@@ -77,8 +77,10 @@ namespace DripRemix.Handlers {
                 // Change every references by the new texture
                 foreach (GameObject _ref in REFERENCES) {
                     try {
-                        _ref.GetComponent<MeshRenderer>().material.mainTexture = FOLDERS[INDEX_MESH].textures[INDEX_TEXTURE];
-                        _ref.GetComponent<MeshRenderer>().material.SetTexture("_Emission", FOLDERS[INDEX_MESH].emissions[INDEX_TEXTURE]);
+                        foreach (Material mat in _ref.GetComponent<MeshRenderer>().sharedMaterials) {
+                            mat.mainTexture = FOLDERS[INDEX_MESH].textures[INDEX_TEXTURE];
+                            mat.SetTexture("_Emission", FOLDERS[INDEX_MESH].emissions[INDEX_TEXTURE]);
+                        }
                     } catch {
                         Main.Log.LogError($"Missing texture : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}\\{_ref.name}");
                     }

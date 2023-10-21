@@ -6,6 +6,7 @@ using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Configuration;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Reptile;
 using Reptile.Phone;
 using OBJImporter;
@@ -24,6 +25,9 @@ namespace DripRemix {
         internal static DirectoryInfo ModdingFolder = Directory.CreateDirectory(Path.Combine(Paths.GameRootPath, "ModdingFolder", "BRC-DripRemix"));
         internal static DirectoryInfo CharactersFolder = ModdingFolder.CreateSubdirectory("Characters");
         internal static DirectoryInfo GearsFolder = ModdingFolder.CreateSubdirectory("Gears");
+        internal static DirectoryInfo BMXFolder = GearsFolder.CreateSubdirectory("Bmx");
+        internal static DirectoryInfo InlineFolder = GearsFolder.CreateSubdirectory("Inline");
+        internal static DirectoryInfo SkateboardFolder = GearsFolder.CreateSubdirectory("Skateboard");
         internal static DirectoryInfo PhonesFolder = GearsFolder.CreateSubdirectory("Phones");
         internal static DirectoryInfo SpraycansFolder = GearsFolder.CreateSubdirectory("Spraycans");
         //internal static DirectoryInfo GraffitiFolder = ModdingFolder.CreateSubdirectory("Graffiti");
@@ -55,7 +59,7 @@ namespace DripRemix {
 
         public Dictionary<string, Material> MATERIALS = new Dictionary<string, Material>();
         public Dictionary<Characters, ConfigEntry<HandlersConfig>> SavedIndexes = new Dictionary<Characters, ConfigEntry<HandlersConfig>>();
-        public static Dictionary<Characters, string> CHARACTERMAPS = new Dictionary<Characters, string>() {
+        /*public static Dictionary<Characters, string> CHARACTERMAPS = new Dictionary<Characters, string>() {
             // Added by Characters.list order
             [Characters.girl1] = "Vinyl",
             [Characters.frank] = "Frank",
@@ -83,7 +87,7 @@ namespace DripRemix {
             [Characters.headManNoJetpack] = "Faux (Prelude)",
             [Characters.eightBallBoss] = "DOT EXE (Boss)",
             [Characters.legendMetalHead] = "Red Felix (Dream)",
-        };
+        };*/
 
         void Awake() {
             Instance = this;
@@ -104,10 +108,10 @@ namespace DripRemix {
             // Init Folders, Lists and Saved Indexes
             SavedIndexes.Add(Characters.NONE, Config.Bind("Saved Indexes", $"Default Indexes", new HandlersConfig(Characters.NONE), $"Default saved indexes"));
             Config.SaveOnConfigSet = true;
-            foreach (KeyValuePair<Characters, string> entry in CHARACTERMAPS) {
-                CharactersFolder.CreateSubdirectory(Path.Combine(entry.Value, ".Default"));
-                SavedIndexes.Add(entry.Key, Config.Bind("Saved Indexes", $"Indexes for {entry.Value}", new HandlersConfig(entry.Key), $"Saved indexes for {entry.Value}"));
-            }
+            //foreach (KeyValuePair<Characters, string> entry in CHARACTERMAPS) {
+            //    CharactersFolder.CreateSubdirectory(Path.Combine(entry.Value, ".Default"));
+            //    SavedIndexes.Add(entry.Key, Config.Bind("Saved Indexes", $"Indexes for {entry.Value}", new HandlersConfig(entry.Key), $"Saved indexes for {entry.Value}"));
+            //}
             CHARACTER = new CharacterHandler();
             GEARS.Add(MoveStyle.INLINE, new GearHandler(MoveStyle.INLINE));
             GEARS.Add(MoveStyle.SKATEBOARD, new GearHandler(MoveStyle.SKATEBOARD));
@@ -131,7 +135,7 @@ namespace DripRemix {
                     ReloadAssets(); // It'll reload references too
 
                     // Init Materials
-                    InitMaterials();
+                    GetMaterials();
                 }
 
                 if (WorldHandler.instance.currentPlayer.inGraffitiGame) {
@@ -211,41 +215,71 @@ namespace DripRemix {
         }
 
         void GetReferences() {
+            // Character Visual Slot
             try {
                 PLAYER_VISUAL = WorldHandler.instance.currentPlayer.characterVisual;
             } catch {
                 Log.LogError("Player.CharacterVisual can't be referenced !");
             }
 
+            // Phone Slot
             try {
                 PLAYER_PHONE = WorldHandler.instance.currentPlayer.phone;
             } catch {
                 Log.LogError("Player.Phone can't be referenced !");
             }
 
-            
+
             // Character
-            //foreach (KeyValuePair<Characters, string> entry in CHARACTERMAPS) {
-                foreach (Transform child in PLAYER_VISUAL.characterObject.transform) {
-                    try {
-                        if (child.GetComponent<SkinnedMeshRenderer>()) {
-                            CHARACTER.REFERENCES.Add(child.gameObject);
-                            //CHARACTERS[entry.Key].REFERENCES.Add(child.gameObject);
-                        }
-                    } catch {
-                        Log.LogError("Character SkinnedMeshRenderer can't be referenced !");
+            foreach (Transform child in PLAYER_VISUAL.characterObject.transform) {
+                try {
+                    if (child.GetComponent<SkinnedMeshRenderer>()) {
+                        CHARACTER.REFERENCES.Add(child.gameObject);
                     }
+                } catch {
+                    Log.LogError("Character SkinnedMeshRenderer can't be referenced !");
                 }
-            //}
+            }
 
             // Gears
+            NPC[] GearSpotsInHideout = GameObject.FindObjectsOfType<NPC>();
             try {
+                // Hideout Skateboard Spot
+                foreach (var spot in GearSpotsInHideout) {
+                    if (spot.name == "NPC_MovestyleChangerSkateboard") {
+                        GameObject go;
+                        // Skateboard 1
+                        go = spot.transform.Find("PreviewSkateboard/skateboard").gameObject;
+                        go.name = "skateboard(Clone)";
+                        GEARS[MoveStyle.SKATEBOARD].REFERENCES.Add(go);
+                        // Skateboard 2
+                        go = spot.transform.Find("PreviewSkateboard/skateboard (1)").gameObject;
+                        go.name = "skateboard(Clone)";
+                        GEARS[MoveStyle.SKATEBOARD].REFERENCES.Add(go);
+                    }
+                }
+
                 GEARS[MoveStyle.SKATEBOARD].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.skateboard);
             } catch {
                 Log.LogError("Skateboard Gameobject can't be referenced !");
             }
 
             try {
+                // Hideout Inlines Spot
+                foreach (var spot in GearSpotsInHideout) {
+                    if (spot.name == "NPC_MovestyleChangerInline") {
+                        GameObject go;
+                        // Skate Left
+                        go = spot.transform.Find("SkatesPreview/skateLeft").gameObject;
+                        go.name = "skateLeft(Clone)";
+                        GEARS[MoveStyle.INLINE].REFERENCES.Add(go);
+                        // Skate Right
+                        go = spot.transform.Find("SkatesPreview/skateRight").gameObject;
+                        go.name = "skateRight(Clone)";
+                        GEARS[MoveStyle.INLINE].REFERENCES.Add(go);
+                    }
+                }
+
                 GEARS[MoveStyle.INLINE].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.skateL);
                 GEARS[MoveStyle.INLINE].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.skateR);
             } catch {
@@ -253,6 +287,19 @@ namespace DripRemix {
             }
 
             try {
+                // Hideout BMX Spot
+                foreach (var spot in GearSpotsInHideout) {
+                    if (spot.name == "NPC_MovestyleChangerBMX") {
+                        GEARS[MoveStyle.BMX].REFERENCES.Add(spot.transform.Find("BMXPreview/BmxFrame(Clone)").gameObject);
+                        GEARS[MoveStyle.BMX].REFERENCES.Add(spot.transform.Find("BMXPreview/bmxGear/BmxGear(Clone)").gameObject);
+                        GEARS[MoveStyle.BMX].REFERENCES.Add(spot.transform.Find("BMXPreview/bmxHandlebars/BmxHandlebars(Clone)").gameObject);
+                        GEARS[MoveStyle.BMX].REFERENCES.Add(spot.transform.Find("BMXPreview/bmxGear/bmxPedalL/BmxPedalL(Clone)").gameObject);
+                        GEARS[MoveStyle.BMX].REFERENCES.Add(spot.transform.Find("BMXPreview/bmxGear/bmxPedalR/BmxPedalR(Clone)").gameObject);
+                        GEARS[MoveStyle.BMX].REFERENCES.Add(spot.transform.Find("BMXPreview/bmxHandlebars/bmxWheelF/BmxWheelF(Clone)").gameObject);
+                        GEARS[MoveStyle.BMX].REFERENCES.Add(spot.transform.Find("BMXPreview/bmxWheelR/BmxWheelR(Clone)").gameObject);
+                    }
+                }
+
                 GEARS[MoveStyle.BMX].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.bmxFrame);
                 GEARS[MoveStyle.BMX].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.bmxGear);
                 GEARS[MoveStyle.BMX].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.bmxHandlebars);
@@ -306,9 +353,9 @@ namespace DripRemix {
             SPRAYCANS.GetAssets();
 
             // Reload References
-            if (WorldHandler.instance?.currentPlayer != null) {
+            //if (WorldHandler.instance?.currentPlayer != null) {
                 ReloadReferences();
-            }
+            //}
         }
 
         void ReloadReferences() {
@@ -318,6 +365,9 @@ namespace DripRemix {
                 handler.REFERENCES.Clear();
             PHONES.REFERENCES.Clear();
             SPRAYCANS.REFERENCES.Clear();
+            MATERIALS.Clear();
+
+            // Get References
             GetReferences();
 
             // Apply the new Assets
@@ -327,16 +377,16 @@ namespace DripRemix {
             SPRAYCANS.Reapply();
         }
 
-        void InitMaterials() {
-            //Material mat = new Material(Shader.Find("Unlit/Transparent"));
+        void GetMaterials() {
+            if (Core.instance.Assets) {
+                Bundle bundle = Core.instance.Assets.availableBundles["common_assets"];
 
-            //_MYLIST = GameObject.FindObjectsOfType<Material>();
-            
-            //MATERIALS.Add("AmbientCharacter", new Material(Shader.Find("Unlit/Transparent"));
-            //MATERIALS.Add("AmbientEnvironment", new Material(Shader.Find("Reptile/Ambient Environment")));
-            //MATERIALS.Add("AmbientEnvironmentCutout", new Material(Shader.Find("Reptile/Ambient Environment Cutout")));
-            //MATERIALS.Add("UnlitTransparent", new Material(Shader.Find("Unlit/Transparent")));
-            //MATERIALS.Add("Standard", new Material(Shader.Find("Standard")));
+                MATERIALS.Add("Character", new Material(bundle.assetBundle.LoadAsset<Material>("pedestrianMat").shader));
+                MATERIALS.Add("Environment", new Material(bundle.assetBundle.LoadAsset<Material>("Hideout_Buildings03AtlasMat").shader));
+                MATERIALS.Add("TransparentCutout", new Material(bundle.assetBundle.LoadAsset<Material>("Hideout_PropsAtlasMat").shader));
+                MATERIALS.Add("TransparentUnlit", new Material(bundle.assetBundle.LoadAsset<Material>("unlitTransparentRed").shader));
+                MATERIALS.Add("SpriteAnimation", bundle.assetBundle.LoadAsset<Material>("AnimBillboardAtlas"));
+            }
         }
 
         string RandomLine() {
@@ -344,7 +394,7 @@ namespace DripRemix {
                 "Dig it !",
                 "Yo What's up ?",
                 "OPERATEOPERATEOPERATE",
-                "ASS ASS ASS",
+                "SHAKE DAT ASS ASS ASS",
                 "You Degenerate",
                 "Better Watch Ya Back !",
                 "Get REP man",

@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\Jeux\Steam\steamapps\common\BombRushCyberfunk\BepInEx\plugins\BRC-DripRemix\</OutputPath>
+    <OutputPath>C:\Program Files (x86)\Steam\steamapps\common\BombRushCyberfunk\BepInEx\plugins\BRC-DripRemix\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Reptile;
 
 namespace DripRemix.Handlers {
@@ -94,8 +95,8 @@ namespace DripRemix.Handlers {
                         effect.strokes.GetComponent<ParticleSystemRenderer>().material.color = _tex.GetPixel(1, 1);
                     }
                 }
-            } catch {
-                Main.Log.LogError($"GraffitiEffect issues !");
+            } catch (Exception e) {
+                Main.Log.LogError($"GraffitiEffect issues !\n\n{e}");
             }
         }
 
