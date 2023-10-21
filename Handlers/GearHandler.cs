@@ -16,7 +16,21 @@ namespace DripRemix.Handlers {
 
         override public void GetAssets() {
             base.GetAssets();
-            LoadDetails(MOVESTYLE.ToString().ToLower().FirstCharToUpper(), null); 
+            LoadDetails(MOVESTYLE.ToString().ToLower().FirstCharToUpper(), null);
+
+            // Get Index
+            if (MOVESTYLE == MoveStyle.INLINE) {
+                INDEX_MESH = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].inlineMesh;
+                INDEX_TEXTURE = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].inlineTex;
+            }
+            if (MOVESTYLE == MoveStyle.SKATEBOARD) {
+                INDEX_MESH = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].skateboardMesh;
+                INDEX_TEXTURE = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].skateboardTex;
+            }
+            if (MOVESTYLE == MoveStyle.BMX) {
+                INDEX_MESH = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].bmxMesh;
+                INDEX_TEXTURE = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].bmxTex;
+            }
         }
 
         override public void SetMesh(int indexMod) {

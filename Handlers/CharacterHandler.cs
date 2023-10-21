@@ -7,36 +7,34 @@ namespace DripRemix.Handlers {
 
     public class CharacterHandler : DripHandler {
 
-        public Characters CURRENTCHARACTER;
-
-        public Dictionary<Characters, int> VertexCounts = new Dictionary<Characters, int>()
+        public Dictionary<string, string> ConvertNames = new Dictionary<string, string>()
         {
-            { Characters.girl1, 2993 },
-            { Characters.frank, 2306 },
-            { Characters.ringdude, 2262 },
-            { Characters.metalHead, 2793 },
-            { Characters.blockGuy, 3275 },
-            { Characters.spaceGirl, 3376 },
-            { Characters.angel, 3103 },
-            { Characters.eightBall, 3103 },
-            { Characters.dummy, 2829 },
-            { Characters.dj, 3312 },
-            { Characters.medusa, 3154 },
-            { Characters.boarder, 3028 },
-            { Characters.headMan, 3108 },
-            { Characters.prince, 2675 },
-            { Characters.jetpackBossPlayer, 4603 },
-            { Characters.legendFace, 2657 },
-            { Characters.oldheadPlayer, 1819 },
-            { Characters.robot, 5750 },
-            { Characters.skate, 4869 },
-            { Characters.wideKid, 2069 },
-            { Characters.futureGirl, 3154 },
-            { Characters.pufferGirl, 2915 },
-            { Characters.bunGirl, 2517 },
-            { Characters.headManNoJetpack, 2903 },
-            { Characters.eightBallBoss, 3103 },
-            { Characters.legendMetalHead, 2436 },
+            {"girl1" , "Vinyl"},
+            {"frank" , "Frank" },
+            {"ringdude" , "Coil"},
+            {"metalHead" , "Red"},
+            {"blockGuy" , "Tryce"},
+            {"spaceGirl" , "Bel"},
+            {"angel" , "Rave"},
+            {"eightBall" , "DOT EXE"},
+            {"dummy" , "Solace"},
+            {"dj" , "DJ Cyber"},
+            {"medusa" , "Eclipse"},
+            {"boarder" , "Devil Theory"},
+            {"headMan" , "Faux"},
+            {"prince" , "Flesh Prince"},
+            {"jetpackBossPlayer" , "Irene Rietveld"},
+            {"legendFace" , "Felix"},
+            {"oldheadPlayer" , "Oldhead"},
+            {"robot" , "Base"},
+            {"skate" , "Jay"},
+            {"wideKid" , "Mesh"},
+            {"futureGirl" , "Futurism"},
+            {"pufferGirl" , "Rise"},
+            {"bunGirl" , "Shine"},
+            {"headManNoJetpack" , "Faux (Prelude)"},
+            {"eightBallBoss" , "DOT EXE (Boss)"},
+            {"legendMetalHead" , "Red Felix (Dream)"},
         };
 
         public CharacterHandler(/*Characters character*/) : base(HandlerTypes.Character) {
@@ -48,9 +46,15 @@ namespace DripRemix.Handlers {
             // Clean
             FOLDERS.Clear();
 
-            // Get Current Character
-            CURRENTCHARACTER = WorldHandler.instance.currentPlayer.character;
-            AssetFolder = Main.CharactersFolder.CreateSubdirectory(CharacterToString(CURRENTCHARACTER));
+            // Get Index
+            INDEX_MESH = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].charMesh;
+            INDEX_TEXTURE = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].charTex;
+
+            if (ConvertNames.ContainsKey(Main.CURRENTCHARACTER)) {
+                AssetFolder = Main.CharactersFolder.CreateSubdirectory(ConvertNames[Main.CURRENTCHARACTER]);
+            } else {
+                AssetFolder = Main.CharactersFolder.CreateSubdirectory(Main.CURRENTCHARACTER);
+            }
 
             // Search & Add
             DirectoryInfo[] folders = AssetFolder.GetDirectories();
@@ -97,13 +101,12 @@ namespace DripRemix.Handlers {
             }
 
             // Log
-            LoadDetails("CHARACTER", CharacterToString(CURRENTCHARACTER));
+            LoadDetails("CHARACTER", Main.CURRENTCHARACTER);
         }
 
         override public void SetTexture(int add) {
             // Check if there is at least something to change
             if (FOLDERS.Count > 0) {
-
                 // Add value to the Index
                 INDEX_TEXTURE = Mathf.Clamp(INDEX_TEXTURE + add, 0, FOLDERS[0].textures.Count - 1);
 
@@ -111,33 +114,19 @@ namespace DripRemix.Handlers {
                 foreach (GameObject _ref in REFERENCES) {
                     SkinnedMeshRenderer smr = _ref.GetComponent<SkinnedMeshRenderer>();
 
-                    // Check if it's a Custom Model by comparing Vertex Count
-                    if (smr.sharedMesh.vertexCount == VertexCounts[CURRENTCHARACTER]) {
-                        smr.material.mainTexture = FOLDERS[0].textures[INDEX_TEXTURE];
-                        smr.material.SetTexture("_Emission", FOLDERS[0].emissions[INDEX_TEXTURE]);
-                    } else {
-                        try {
-                            if (FOLDERS[0].parameters["forceTextureOverride"].ToLower() == "true") {
-                                smr.material.mainTexture = FOLDERS[0].textures[INDEX_TEXTURE];
-                                smr.material.SetTexture("_Emission", FOLDERS[0].emissions[INDEX_TEXTURE]);
-                            } else {
-                                Main.Log.LogError("Custom Character Model detected by vertex comparison ! Texture have not been changed !\n" +
-                                $"Ignore this error if it's intended, or you can set [forceTextureOverride] to [True] in {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}\\info.txt\n");
-                            }
-                        } catch {
-                            Main.Log.LogError($"Missing info or wrong parameters : {FOLDERS[0].directory.Parent.Name}\\{FOLDERS[0].directory.Name}\\info.txt\n");
+                    try {
+                        if (FOLDERS[0].parameters["forceTextureOverride"].ToLower() == "true") {
+                            smr.material.mainTexture = FOLDERS[0].textures[INDEX_TEXTURE];
+                            smr.material.SetTexture("_Emission", FOLDERS[0].emissions[INDEX_TEXTURE]);
+                        } else {
+                            Main.Log.LogError("Custom Character Model detected by vertex comparison ! Texture have not been changed !\n" +
+                            $"Ignore this error if it's intended, or you can set [forceTextureOverride] to [True] in {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}\\info.txt\n");
                         }
-                        
+                    } catch {
+                        Main.Log.LogError($"Missing info or wrong parameters : {FOLDERS[0].directory.Parent.Name}\\{FOLDERS[0].directory.Name}\\info.txt\n");
                     }
                 }
             }
-        }
-
-        public static string CharacterToString(Characters character) {
-            if (Main.CHARACTERMAPS.ContainsKey(character)) {
-                return Main.CHARACTERMAPS[character];
-            }
-            return character.ToString();
         }
     }
 }

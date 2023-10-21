@@ -6,8 +6,7 @@ using BepInEx.Configuration;
 using Reptile;
 using OBJImporter;
 
-namespace DripRemix.Handlers
-{
+namespace DripRemix.Handlers {
     public class DripHandler {
 
         public List<AssetFolder> FOLDERS = new List<AssetFolder>();
@@ -15,38 +14,41 @@ namespace DripRemix.Handlers
 
         protected HandlerTypes type;
 
-        public int INDEX_MESH {
-            get {
-                var currentChar = WorldHandler.instance?.currentPlayer?.character;
-                return Main.Instance?.SavedIndexes[currentChar ?? Characters.NONE].Value.indexes[(int)type].Mesh ?? 0;
-            }
-            set {
-                var currentChar = WorldHandler.instance?.currentPlayer?.character;
-                var config = Main.Instance?.SavedIndexes[currentChar ?? Characters.NONE];
-                if (config != null) {
-                    HandlersConfig hc = config.Value;
-                    hc.indexes[(int)type].Mesh = value;
-                    config.Value = hc;
-                    Main.Instance.Config.Save();
-                }
-            }
-        }
-        public int INDEX_TEXTURE {
-            get {
-                var currentChar = WorldHandler.instance?.currentPlayer?.character;
-                return Main.Instance?.SavedIndexes[currentChar ?? Characters.NONE].Value.indexes[(int)type].Texture ?? 0;
-            }
-            set {
-                var currentChar = WorldHandler.instance?.currentPlayer?.character;
-                var config = Main.Instance?.SavedIndexes[currentChar ?? Characters.NONE];
-                if (config != null) {
-                    HandlersConfig hc = config.Value;
-                    hc.indexes[(int)type].Texture = value;
-                    config.Value = hc;
-                    Main.Instance.Config.Save();
-                }
-            }
-        }
+        public int INDEX_MESH = 0;
+        //public int INDEX_MESH {
+        //    get {
+        //        var currentChar = WorldHandler.instance?.currentPlayer?.character;
+        //        return Main.Instance?.SavedIndexes[currentChar ?? Characters.NONE].Value.indexes[(int)type].Mesh ?? 0;
+        //    }
+        //    set {
+        //        var currentChar = WorldHandler.instance?.currentPlayer?.character;
+        //        var config = Main.Instance?.SavedIndexes[currentChar ?? Characters.NONE];
+        //        if (config != null) {
+        //            HandlersConfig hc = config.Value;
+        //            hc.indexes[(int)type].Mesh = value;
+        //            config.Value = hc;
+        //            Main.Instance.Config.Save();
+        //        }
+        //    }
+        //}
+
+        public int INDEX_TEXTURE = 0;
+        //public int INDEX_TEXTURE {
+        //    get {
+        //        var currentChar = WorldHandler.instance?.currentPlayer?.character;
+        //        return Main.Instance?.SavedIndexes[currentChar ?? Characters.NONE].Value.indexes[(int)type].Texture ?? 0;
+        //    }
+        //    set {
+        //        var currentChar = WorldHandler.instance?.currentPlayer?.character;
+        //        var config = Main.Instance?.SavedIndexes[currentChar ?? Characters.NONE];
+        //        if (config != null) {
+        //            HandlersConfig hc = config.Value;
+        //            hc.indexes[(int)type].Texture = value;
+        //            config.Value = hc;
+        //            Main.Instance.Config.Save();
+        //        }
+        //    }
+        //}
 
         public DirectoryInfo AssetFolder { get; protected set; }
 
@@ -140,17 +142,19 @@ namespace DripRemix.Handlers
 
         public void LoadDetails(string typeName, string characterName) {
             if (typeName == "CHARACTER") {
-                if (FOLDERS[0].textures.Count > 0) {
-                    string _names = "";
-                    for (int i = 0; i < FOLDERS[0].textures.Count; i++) {
-                        try {
-                            _names += $"\n   • {FOLDERS[0].textures[i].name}";
-                        } catch {
-                            Main.Log.LogError($"Missing/Wrong info.txt : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}\\info.txt");
+                if (FOLDERS.Count > 0) {
+                    if (FOLDERS[0].textures.Count > 0) {
+                        string _names = "";
+                        for (int i = 0; i < FOLDERS[0].textures.Count; i++) {
+                            try {
+                                _names += $"\n   • {FOLDERS[0].textures[i].name}";
+                            } catch {
+                                Main.Log.LogError($"Missing/Wrong info.txt : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}\\info.txt");
+                            }
                         }
+                        Main.Log.LogMessage($"{FOLDERS[0].textures.Count} Skin(s) for {characterName} loaded ! {_names}\n");
                     }
-                    Main.Log.LogMessage($"{FOLDERS[0].textures.Count} Skin(s) for {characterName} loaded ! {_names}\n");
-                }
+                } 
             } else {
                 if (FOLDERS.Count > 0) {
                     string _descriptions = "";
@@ -161,7 +165,6 @@ namespace DripRemix.Handlers
                             Main.Log.LogError($"Missing/Wrong info.txt : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}\\info.txt");
                         }
                     }
-
                     Main.Log.LogMessage($"{FOLDERS.Count} {typeName}(s) loaded ! {_descriptions}\n");
                 }
             } 
