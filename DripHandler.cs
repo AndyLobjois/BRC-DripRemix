@@ -11,50 +11,10 @@ namespace DripRemix.Handlers {
 
         public List<AssetFolder> FOLDERS = new List<AssetFolder>();
         public List<GameObject> REFERENCES = new List<GameObject>();
-
-        protected HandlerTypes type;
-
         public int INDEX_MESH = 0;
-        //public int INDEX_MESH {
-        //    get {
-        //        var currentChar = WorldHandler.instance?.currentPlayer?.character;
-        //        return Main.Instance?.SavedIndexes[currentChar ?? Characters.NONE].Value.indexes[(int)type].Mesh ?? 0;
-        //    }
-        //    set {
-        //        var currentChar = WorldHandler.instance?.currentPlayer?.character;
-        //        var config = Main.Instance?.SavedIndexes[currentChar ?? Characters.NONE];
-        //        if (config != null) {
-        //            HandlersConfig hc = config.Value;
-        //            hc.indexes[(int)type].Mesh = value;
-        //            config.Value = hc;
-        //            Main.Instance.Config.Save();
-        //        }
-        //    }
-        //}
-
         public int INDEX_TEXTURE = 0;
-        //public int INDEX_TEXTURE {
-        //    get {
-        //        var currentChar = WorldHandler.instance?.currentPlayer?.character;
-        //        return Main.Instance?.SavedIndexes[currentChar ?? Characters.NONE].Value.indexes[(int)type].Texture ?? 0;
-        //    }
-        //    set {
-        //        var currentChar = WorldHandler.instance?.currentPlayer?.character;
-        //        var config = Main.Instance?.SavedIndexes[currentChar ?? Characters.NONE];
-        //        if (config != null) {
-        //            HandlersConfig hc = config.Value;
-        //            hc.indexes[(int)type].Texture = value;
-        //            config.Value = hc;
-        //            Main.Instance.Config.Save();
-        //        }
-        //    }
-        //}
 
         public DirectoryInfo AssetFolder { get; protected set; }
-
-        public DripHandler(HandlerTypes type) {
-            this.type = type;
-        }
 
         virtual public void GetAssets() {
             // Clean
@@ -173,7 +133,7 @@ namespace DripRemix.Handlers {
         virtual public void SetMesh(int indexMod) { }
         virtual public void SetTexture(int indexMod) { }
 
-        virtual public void Reapply () {
+        virtual public void Apply () {
             SetMesh(0);
             SetTexture(0);
         }

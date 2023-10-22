@@ -21,26 +21,26 @@ namespace DripRemix {
         internal static ManualLogSource Log { get; private set; }
 
         // Folders
-        internal static DirectoryInfo ModdingFolder = Directory.CreateDirectory(Path.Combine(Paths.GameRootPath, "ModdingFolder", "BRC-DripRemix"));
-        internal static DirectoryInfo CharactersFolder = ModdingFolder.CreateSubdirectory("Characters");
-        internal static DirectoryInfo GearsFolder = ModdingFolder.CreateSubdirectory("Gears");
-        internal static DirectoryInfo BMXFolder = GearsFolder.CreateSubdirectory("Bmx");
-        internal static DirectoryInfo InlineFolder = GearsFolder.CreateSubdirectory("Inline");
-        internal static DirectoryInfo SkateboardFolder = GearsFolder.CreateSubdirectory("Skateboard");
-        internal static DirectoryInfo PhonesFolder = GearsFolder.CreateSubdirectory("Phones");
-        internal static DirectoryInfo SpraycansFolder = GearsFolder.CreateSubdirectory("Spraycans");
-        //internal static DirectoryInfo GraffitiFolder = ModdingFolder.CreateSubdirectory("Graffiti");
+        internal static DirectoryInfo FolderModding = Directory.CreateDirectory(Path.Combine(Paths.GameRootPath, "ModdingFolder", "BRC-DripRemix"));
+        internal static DirectoryInfo FolderCharacter = FolderModding.CreateSubdirectory("Characters");
+        internal static DirectoryInfo FolderGears = FolderModding.CreateSubdirectory("Gears");
+        internal static DirectoryInfo FolderBMX = FolderGears.CreateSubdirectory("Bmx");
+        internal static DirectoryInfo FolderInline = FolderGears.CreateSubdirectory("Inline");
+        internal static DirectoryInfo FolderSkateboard = FolderGears.CreateSubdirectory("Skateboard");
+        internal static DirectoryInfo FolderPhone = FolderGears.CreateSubdirectory("Phones");
+        internal static DirectoryInfo FolderSpraycan = FolderGears.CreateSubdirectory("Spraycans");
+        //internal static DirectoryInfo FolderGraffiti = ModdingFolder.CreateSubdirectory("Graffiti");
 
         // Inputs
-        internal ConfigEntry<KeyCode> characterKey;
-        internal ConfigEntry<KeyCode> gearKey;
-        internal ConfigEntry<KeyCode> phoneKey;
-        internal ConfigEntry<KeyCode> spraycanKey;
-        internal ConfigEntry<KeyCode> reloadKey;
-        internal ConfigEntry<KeyCode> meshUpKey;
-        internal ConfigEntry<KeyCode> meshDownKey;
-        internal ConfigEntry<KeyCode> textureUpKey;
-        internal ConfigEntry<KeyCode> textureDownKey;
+        internal ConfigEntry<KeyCode> keyCharacter;
+        internal ConfigEntry<KeyCode> keyGear;
+        internal ConfigEntry<KeyCode> keyPhone;
+        internal ConfigEntry<KeyCode> keySpraycan;
+        internal ConfigEntry<KeyCode> keyReload;
+        internal ConfigEntry<KeyCode> keyMeshUp;
+        internal ConfigEntry<KeyCode> keyMeshDown;
+        internal ConfigEntry<KeyCode> keyTextureUp;
+        internal ConfigEntry<KeyCode> keyTextureDown;
 
         // References
         public static Save SAVE = new Save();
@@ -50,7 +50,6 @@ namespace DripRemix {
         public CharacterVisual PLAYER_VISUAL;
         public Phone PLAYER_PHONE;
         public Dictionary<string, Material> MATERIALS = new Dictionary<string, Material>();
-        public enum Check { Character, Gear, Phone, Spraycan }
 
         public static string CURRENTCHARACTER;
         public CharacterHandler CHARACTER;
@@ -59,22 +58,51 @@ namespace DripRemix {
         public SpraycanHandler SPRAYCANS;
         //public GraffitiHandler GRAFFITI = new GraffitiHandler();
 
+        public enum Check { Character, Gear, Phone, Spraycan }
+        public Dictionary<string, string> ConvertNames = new Dictionary<string, string>()
+        {
+            {"girl1" , "Vinyl"},
+            {"frank" , "Frank" },
+            {"ringdude" , "Coil"},
+            {"metalHead" , "Red"},
+            {"blockGuy" , "Tryce"},
+            {"spaceGirl" , "Bel"},
+            {"angel" , "Rave"},
+            {"eightBall" , "DOT EXE"},
+            {"dummy" , "Solace"},
+            {"dj" , "DJ Cyber"},
+            {"medusa" , "Eclipse"},
+            {"boarder" , "Devil Theory"},
+            {"headMan" , "Faux"},
+            {"prince" , "Flesh Prince"},
+            {"jetpackBossPlayer" , "Irene Rietveld"},
+            {"legendFace" , "Felix"},
+            {"oldheadPlayer" , "Oldhead"},
+            {"robot" , "Base"},
+            {"skate" , "Jay"},
+            {"wideKid" , "Mesh"},
+            {"futureGirl" , "Futurism"},
+            {"pufferGirl" , "Rise"},
+            {"bunGirl" , "Shine"},
+            {"headManNoJetpack" , "Faux (Prelude)"},
+            {"eightBallBoss" , "DOT EXE (Boss)"},
+            {"legendMetalHead" , "Red Felix (Dream)"},
+        };
 
         void Awake() {
             Instance = this;
             Log = this.Logger;
-            HandlersConfig.AddConverter();
 
             // Init Key Inputs
-            reloadKey = Config.Bind("Keybinds", "Reload", KeyCode.F5); // Is there a way to display AcceptableValues only for the first input ?
-            characterKey = Config.Bind("Keybinds", "CharacterKey", KeyCode.C);
-            gearKey = Config.Bind("Keybinds", "GearKey", KeyCode.G);
-            phoneKey = Config.Bind("Keybinds", "PhoneKey", KeyCode.P);
-            spraycanKey = Config.Bind("Keybinds", "SpraycanKey", KeyCode.E);
-            meshUpKey = Config.Bind("Keybinds", "MeshUP", KeyCode.Home);
-            meshDownKey = Config.Bind("Keybinds", "MeshDOWN", KeyCode.End);
-            textureUpKey = Config.Bind("Keybinds", "TextureUP", KeyCode.PageUp);
-            textureDownKey = Config.Bind("Keybinds", "TextureDOWN", KeyCode.PageDown);
+            keyReload = Config.Bind("Keybinds", "Reload", KeyCode.F5); // Is there a way to display AcceptableValues only for the first input ?
+            keyCharacter = Config.Bind("Keybinds", "CharacterKey", KeyCode.C);
+            keyGear = Config.Bind("Keybinds", "GearKey", KeyCode.G);
+            keyPhone = Config.Bind("Keybinds", "PhoneKey", KeyCode.P);
+            keySpraycan = Config.Bind("Keybinds", "SpraycanKey", KeyCode.E);
+            keyMeshUp = Config.Bind("Keybinds", "MeshUP", KeyCode.Home);
+            keyMeshDown = Config.Bind("Keybinds", "MeshDOWN", KeyCode.End);
+            keyTextureUp = Config.Bind("Keybinds", "TextureUP", KeyCode.PageUp);
+            keyTextureDown = Config.Bind("Keybinds", "TextureDOWN", KeyCode.PageDown);
             Config.SaveOnConfigSet = true;
 
             // Init Folders, Lists and Saved Indexes
@@ -85,8 +113,8 @@ namespace DripRemix {
             PHONES = new PhoneHandler();
             SPRAYCANS = new SpraycanHandler();
 
-            // Save System
-            SAVE.GetSave();
+            // Link Main to the Save System
+            SAVE.main = this;
         }
 
         void LateUpdate() {
@@ -94,18 +122,36 @@ namespace DripRemix {
                 if (HASH != WorldHandler.instance.currentPlayer.characterVisual.GetHashCode()) {
                     HASH = WorldHandler.instance.currentPlayer.characterVisual.GetHashCode();
 
-                    // Get All References
+                    // Get Player and Name Reference
                     try {
                         PLAYER = WorldHandler.instance?.currentPlayer.gameObject;
-                        CURRENTCHARACTER = WorldHandler.instance.currentPlayer.characterVisual.name.Replace(" ", "").Replace("Visuals(Clone)", "");
+
+                        // Get Character Name/ID
+                        string nameClean = WorldHandler.instance.currentPlayer.characterVisual.name.Replace(" ", "").Replace("Visuals(Clone)", "");
+                        if (ConvertNames.ContainsKey(nameClean)) {
+                            CURRENTCHARACTER = ConvertNames[nameClean];
+                        } else {
+                            CURRENTCHARACTER = nameClean;
+                        }
                     } catch {
                         Log.LogError("Player can't be referenced !");
                     }
 
-                    ReloadAssets(); // It'll reload references too
+                    // Save
+                    SAVE.GetSave();
+
+                    // Get Everything
+                    GetReferences();
+                    GetAssets();
+
+                    // Apply Assets
+                    Apply();
 
                     // Init Materials
                     GetMaterials();
+
+                    // End Mark
+                    Log.LogMessage($"————————————————————————————————————————— {RandomLine()}");
                 }
 
                 if (WorldHandler.instance.currentPlayer.inGraffitiGame) {
@@ -116,28 +162,30 @@ namespace DripRemix {
 
         void Update() {
             // Inputs
-            CheckInput(characterKey.Value, Check.Character);
-            CheckInput(gearKey.Value, Check.Gear);
-            CheckInput(phoneKey.Value, Check.Phone);
-            CheckInput(spraycanKey.Value, Check.Spraycan);
+            CheckInput(keyCharacter.Value, Check.Character);
+            CheckInput(keyGear.Value, Check.Gear);
+            CheckInput(keyPhone.Value, Check.Phone);
+            CheckInput(keySpraycan.Value, Check.Spraycan);
 
-            if (Input.GetKeyDown(reloadKey.Value)) {
-                ReloadAssets();
+            if (Input.GetKeyDown(keyReload.Value)) {
+                GetReferences();
+                GetAssets();
+                Apply();
             }
         }
 
         void CheckInput(KeyCode key, Check check) {
             if (Input.GetKey(key)) {
-                if (Input.GetKeyDown(meshUpKey.Value)) { // Mesh Swap -
+                if (Input.GetKeyDown(keyMeshUp.Value)) { // Mesh Swap -
                     SetMesh(check, -1);
                 }
-                if (Input.GetKeyDown(meshDownKey.Value)) { // Mesh Swap +
+                if (Input.GetKeyDown(keyMeshDown.Value)) { // Mesh Swap +
                     SetMesh(check, +1);
                 }
-                if (Input.GetKeyDown(textureUpKey.Value)) { // Texture Swap -
+                if (Input.GetKeyDown(keyTextureUp.Value)) { // Texture Swap -
                     SetTexture(check, -1);
                 }
-                if (Input.GetKeyDown(textureDownKey.Value)) {// Texture Swap +
+                if (Input.GetKeyDown(keyTextureDown.Value)) {// Texture Swap +
                     SetTexture(check, +1);
                 }
             }
@@ -160,6 +208,9 @@ namespace DripRemix {
             if (check == Check.Spraycan) {
                 SPRAYCANS.SetMesh(add);
             }
+
+            // Save
+            SAVE.SetSave();
         }
 
         void SetTexture(Check check, int add) {
@@ -179,26 +230,27 @@ namespace DripRemix {
             if (check == Check.Spraycan) {
                 SPRAYCANS.SetTexture(add);
             }
+
+            // Save
+            SAVE.SetSave();
         }
 
         void GetReferences() {
-            SAVE.GetSave();
+            // Clear References
+            CHARACTER.REFERENCES.Clear();
+            foreach (GearHandler handler in GEARS.Values)
+                handler.REFERENCES.Clear();
+            PHONES.REFERENCES.Clear();
+            SPRAYCANS.REFERENCES.Clear();
+            MATERIALS.Clear();
 
+            /* PLAYER --------------------------------------------------------------------------------------------- */
             // Character Visual Slot
             try {
                 PLAYER_VISUAL = WorldHandler.instance.currentPlayer.characterVisual;
-                //CURRENTCHARACTER = PLAYER_VISUAL.name.Replace(" ", "").Replace("Visuals(Clone)", "");
             } catch {
                 Log.LogError("Player.CharacterVisual can't be referenced !");
             }
-
-            // Phone Slot
-            try {
-                PLAYER_PHONE = WorldHandler.instance.currentPlayer.phone;
-            } catch {
-                Log.LogError("Player.Phone can't be referenced !");
-            }
-
 
             // Character
             foreach (Transform child in PLAYER_VISUAL.characterObject.transform) {
@@ -211,32 +263,11 @@ namespace DripRemix {
                 }
             }
 
-            // Gears
-            NPC[] GearSpotsInHideout = GameObject.FindObjectsOfType<NPC>();
             // Player Skateboard
             try {
                 GEARS[MoveStyle.SKATEBOARD].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.skateboard);
             } catch {
                 Log.LogError("Player.Skateboard Gameobject can't be referenced !");
-            }
-
-            // Hideout Skateboard Spot
-            try {
-                foreach (var spot in GearSpotsInHideout) {
-                    if (spot.name == "NPC_MovestyleChangerSkateboard") {
-
-                        // Check if these gameobject exist and haven't been renamed yet
-                        if (spot.transform.Find("PreviewSkateboard/skateboard")) {
-                            spot.transform.Find("PreviewSkateboard/skateboard").name = "skateboard(Clone)";
-                            spot.transform.Find("PreviewSkateboard/skateboard (1)").name = "skateboard(Clone)";
-                        }
-                        
-                        GEARS[MoveStyle.SKATEBOARD].REFERENCES.Add(spot.transform.Find("PreviewSkateboard").GetChild(0).gameObject);
-                        GEARS[MoveStyle.SKATEBOARD].REFERENCES.Add(spot.transform.Find("PreviewSkateboard").GetChild(1).gameObject);
-                    }
-                }
-            } catch {
-                Log.LogError("Hideout Skateboard Gameobject(s) can't be referenced !");
             }
 
             // Player Inlines
@@ -245,25 +276,6 @@ namespace DripRemix {
                 GEARS[MoveStyle.INLINE].REFERENCES.Add(PLAYER_VISUAL.moveStyleProps.skateR);
             } catch {
                 Log.LogError("Player Inline Gameobject(s) can't be referenced !");
-            }
-
-            // Hideout Inlines Spot
-            try {
-                foreach (var spot in GearSpotsInHideout) {
-                    if (spot.name == "NPC_MovestyleChangerInline") {
-
-                        // Check if these gameobject exist and haven't been renamed yet
-                        if (spot.transform.Find("SkatesPreview/skateLeft")) {
-                            spot.transform.Find("SkatesPreview/skateLeft").name = "skateLeft(Clone)";
-                            spot.transform.Find("SkatesPreview/skateRight").name = "skateRight(Clone)";
-                        }
-
-                        GEARS[MoveStyle.INLINE].REFERENCES.Add(spot.transform.Find("SkatesPreview").GetChild(0).gameObject);
-                        GEARS[MoveStyle.INLINE].REFERENCES.Add(spot.transform.Find("SkatesPreview").GetChild(1).gameObject);
-                    }
-                }
-            } catch {
-                Log.LogError("Hideout Inline Gameobject(s) can't be referenced !");
             }
 
             // Player BMX
@@ -279,23 +291,12 @@ namespace DripRemix {
                 Log.LogError("Player BMX Gameobject(s) can't be referenced !");
             }
 
-            // Hideout BMX Spot
+            // Phone Slot
             try {
-                foreach (var spot in GearSpotsInHideout) {
-                    if (spot.name == "NPC_MovestyleChangerBMX") {
-                        GEARS[MoveStyle.BMX].REFERENCES.Add(spot.transform.Find("BMXPreview/BmxFrame(Clone)").gameObject);
-                        GEARS[MoveStyle.BMX].REFERENCES.Add(spot.transform.Find("BMXPreview/bmxGear/BmxGear(Clone)").gameObject);
-                        GEARS[MoveStyle.BMX].REFERENCES.Add(spot.transform.Find("BMXPreview/bmxHandlebars/BmxHandlebars(Clone)").gameObject);
-                        GEARS[MoveStyle.BMX].REFERENCES.Add(spot.transform.Find("BMXPreview/bmxGear/bmxPedalL/BmxPedalL(Clone)").gameObject);
-                        GEARS[MoveStyle.BMX].REFERENCES.Add(spot.transform.Find("BMXPreview/bmxGear/bmxPedalR/BmxPedalR(Clone)").gameObject);
-                        GEARS[MoveStyle.BMX].REFERENCES.Add(spot.transform.Find("BMXPreview/bmxHandlebars/bmxWheelF/BmxWheelF(Clone)").gameObject);
-                        GEARS[MoveStyle.BMX].REFERENCES.Add(spot.transform.Find("BMXPreview/bmxWheelR/BmxWheelR(Clone)").gameObject);
-                    }
-                }  
+                PLAYER_PHONE = WorldHandler.instance.currentPlayer.phone;
             } catch {
-                Log.LogError("Hideout BMX Gameobject(s) can't be referenced !");
+                Log.LogError("Player.Phone can't be referenced !");
             }
-            
 
             // Phone
             try {
@@ -305,7 +306,6 @@ namespace DripRemix {
             } catch {
                 Log.LogError("Phone Gameobject(s) can't be referenced !");
             }
-
 
             // Spraycan
             try {
@@ -326,40 +326,72 @@ namespace DripRemix {
                 }
             }
 
-            Log.LogMessage($"————————————————————————————————————————— {RandomLine()}");
-        }
+            
+            /* HIDEOUT --------------------------------------------------------------------------------------------- */
+            NPC[] GearSpotsInHideout = GameObject.FindObjectsOfType<NPC>();
 
-        void ReloadAssets() {
-            // Reload References
-            if (WorldHandler.instance?.currentPlayer != null) {
-                ReloadReferences();
+            // Hideout Inlines Spot
+            try {
+                foreach (var spot in GearSpotsInHideout) {
+                    if (spot.name == "NPC_MovestyleChangerInline") {
+
+                        // Check if these gameobject exist and haven't been renamed yet
+                        if (spot.transform.Find("SkatesPreview/skateLeft")) {
+                            spot.transform.Find("SkatesPreview/skateLeft").name = "skateLeft(Clone)";
+                            spot.transform.Find("SkatesPreview/skateRight").name = "skateRight(Clone)";
+                        }
+
+                        GEARS[MoveStyle.INLINE].REFERENCES.Add(spot.transform.Find("SkatesPreview").GetChild(0).gameObject);
+                        GEARS[MoveStyle.INLINE].REFERENCES.Add(spot.transform.Find("SkatesPreview").GetChild(1).gameObject);
+                    }
+                }
+            } catch {
+                Log.LogError("Hideout Inline Gameobject(s) can't be referenced !");
             }
 
-            // Get Assets
+            // Hideout Skateboard Spot
+            try {
+                foreach (var spot in GearSpotsInHideout) {
+                    if (spot.name == "NPC_MovestyleChangerSkateboard") {
+
+                        // Check if these gameobject exist and haven't been renamed yet
+                        if (spot.transform.Find("PreviewSkateboard/skateboard")) {
+                            spot.transform.Find("PreviewSkateboard/skateboard").name = "skateboard(Clone)";
+                            spot.transform.Find("PreviewSkateboard/skateboard (1)").name = "skateboard(Clone)";
+                        }
+
+                        GEARS[MoveStyle.SKATEBOARD].REFERENCES.Add(spot.transform.Find("PreviewSkateboard").GetChild(0).gameObject);
+                        GEARS[MoveStyle.SKATEBOARD].REFERENCES.Add(spot.transform.Find("PreviewSkateboard").GetChild(1).gameObject);
+                    }
+                }
+            } catch {
+                Log.LogError("Hideout Skateboard Gameobject(s) can't be referenced !");
+            }
+
+            // Hideout BMX Spot
+            try {
+                foreach (var spot in GearSpotsInHideout) {
+                    if (spot.name == "NPC_MovestyleChangerBMX") {
+                        GEARS[MoveStyle.BMX].REFERENCES.Add(spot.transform.Find("BMXPreview/BmxFrame(Clone)").gameObject);
+                        GEARS[MoveStyle.BMX].REFERENCES.Add(spot.transform.Find("BMXPreview/bmxGear/BmxGear(Clone)").gameObject);
+                        GEARS[MoveStyle.BMX].REFERENCES.Add(spot.transform.Find("BMXPreview/bmxHandlebars/BmxHandlebars(Clone)").gameObject);
+                        GEARS[MoveStyle.BMX].REFERENCES.Add(spot.transform.Find("BMXPreview/bmxGear/bmxPedalL/BmxPedalL(Clone)").gameObject);
+                        GEARS[MoveStyle.BMX].REFERENCES.Add(spot.transform.Find("BMXPreview/bmxGear/bmxPedalR/BmxPedalR(Clone)").gameObject);
+                        GEARS[MoveStyle.BMX].REFERENCES.Add(spot.transform.Find("BMXPreview/bmxHandlebars/bmxWheelF/BmxWheelF(Clone)").gameObject);
+                        GEARS[MoveStyle.BMX].REFERENCES.Add(spot.transform.Find("BMXPreview/bmxWheelR/BmxWheelR(Clone)").gameObject);
+                    }
+                }  
+            } catch {
+                Log.LogError("Hideout BMX Gameobject(s) can't be referenced !");
+            }
+        }
+
+        void GetAssets() {
             CHARACTER.GetAssets();
             foreach (GearHandler handler in GEARS.Values)
                 handler.GetAssets();
             PHONES.GetAssets();
             SPRAYCANS.GetAssets();
-        }
-
-        void ReloadReferences() {
-            // Clear References
-            CHARACTER.REFERENCES.Clear();
-            foreach (GearHandler handler in GEARS.Values)
-                handler.REFERENCES.Clear();
-            PHONES.REFERENCES.Clear();
-            SPRAYCANS.REFERENCES.Clear();
-            MATERIALS.Clear();
-
-            // Get References
-            GetReferences();
-
-            // Apply the new Assets
-            CHARACTER.Reapply();
-            GEARS[WorldHandler.instance.currentPlayer.moveStyleEquipped].Reapply();
-            PHONES.Reapply();
-            SPRAYCANS.Reapply();
         }
 
         void GetMaterials() {
@@ -372,6 +404,13 @@ namespace DripRemix {
                 MATERIALS.Add("TransparentUnlit", new Material(bundle.assetBundle.LoadAsset<Material>("unlitTransparentRed").shader));
                 MATERIALS.Add("SpriteAnimation", bundle.assetBundle.LoadAsset<Material>("AnimBillboardAtlas"));
             }
+        }
+
+        void Apply() {
+            CHARACTER.Apply();
+            GEARS[WorldHandler.instance.currentPlayer.moveStyleEquipped].Apply();
+            PHONES.Apply();
+            SPRAYCANS.Apply();
         }
 
         string RandomLine() {

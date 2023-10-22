@@ -37,7 +37,6 @@
   <ItemGroup>
     <Compile Include="AssetFolder.cs" />
     <Compile Include="DripHandler.cs" />
-    <Compile Include="HandlersConfig.cs" />
     <Compile Include="Handlers\CharacterHandler.cs" />
     <Compile Include="Handlers\GraffitiHandler.cs" />
     <Compile Include="Infos.cs" />
@@ -106,6 +105,9 @@
       <HintPath>libs\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Archives\HandlersConfig.zip" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

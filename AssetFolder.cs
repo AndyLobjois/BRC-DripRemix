@@ -39,8 +39,6 @@ namespace DripRemix {
 
             name = parameters["name"];
             author = parameters["author"];
-            //parameters.TryGetValue("name", out name);
-            //parameters.TryGetValue("author", out author);
 
             return $"\n   • {name} by {author}";
         }

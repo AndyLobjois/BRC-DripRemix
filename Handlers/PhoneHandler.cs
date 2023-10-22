@@ -7,11 +7,9 @@ namespace DripRemix.Handlers {
 
     public class PhoneHandler : DripHandler {
 
-        public PhoneHandler() : base(HandlerTypes.Phone) {
-            AssetFolder = Main.PhonesFolder;
-        }
-
         override public void GetAssets() {
+            GetIndex();
+            AssetFolder = Main.FolderPhone;
             base.GetAssets();
             LoadDetails("Phone", null);
 
@@ -116,6 +114,11 @@ namespace DripRemix.Handlers {
                 float.Parse(split[1], CultureInfo.InvariantCulture.NumberFormat),
                 float.Parse(split[2], CultureInfo.InvariantCulture.NumberFormat)
             );
+        }
+
+        void GetIndex() {
+            INDEX_MESH = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].phoneMesh;
+            INDEX_TEXTURE = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].phoneTex;
         }
     }
 }

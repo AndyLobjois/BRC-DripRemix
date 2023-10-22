@@ -4,6 +4,6 @@
     {
         public const string PLUGIN_ID = "fr.github.andylobjois.brc-dripremix";
         public const string PLUGIN_NAME = "DripRemix";
-        public const string PLUGIN_VERSION = "1.0.6";
+        public const string PLUGIN_VERSION = "1.0.7";
     }
 }

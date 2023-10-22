@@ -1,16 +1,15 @@
 ﻿using System;
 using UnityEngine;
 using Reptile;
+using System.Dynamic;
 
 namespace DripRemix.Handlers {
 
     public class SpraycanHandler : DripHandler {
 
-        public SpraycanHandler() : base(HandlerTypes.SprayCan) {
-            AssetFolder = Main.SpraycansFolder;
-        }
-
         override public void GetAssets() {
+            GetIndex();
+            AssetFolder = Main.FolderSpraycan;
             base.GetAssets();
             LoadDetails("Spraycan", null);
         }
@@ -100,5 +99,9 @@ namespace DripRemix.Handlers {
             }
         }
 
+        void GetIndex() {
+            INDEX_MESH = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].spraycanMesh;
+            INDEX_TEXTURE = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].spraycanTex;
+        }
     }
 }

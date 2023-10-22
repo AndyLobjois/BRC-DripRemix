@@ -7,56 +7,15 @@ namespace DripRemix.Handlers {
 
     public class CharacterHandler : DripHandler {
 
-        public Dictionary<string, string> ConvertNames = new Dictionary<string, string>()
-        {
-            {"girl1" , "Vinyl"},
-            {"frank" , "Frank" },
-            {"ringdude" , "Coil"},
-            {"metalHead" , "Red"},
-            {"blockGuy" , "Tryce"},
-            {"spaceGirl" , "Bel"},
-            {"angel" , "Rave"},
-            {"eightBall" , "DOT EXE"},
-            {"dummy" , "Solace"},
-            {"dj" , "DJ Cyber"},
-            {"medusa" , "Eclipse"},
-            {"boarder" , "Devil Theory"},
-            {"headMan" , "Faux"},
-            {"prince" , "Flesh Prince"},
-            {"jetpackBossPlayer" , "Irene Rietveld"},
-            {"legendFace" , "Felix"},
-            {"oldheadPlayer" , "Oldhead"},
-            {"robot" , "Base"},
-            {"skate" , "Jay"},
-            {"wideKid" , "Mesh"},
-            {"futureGirl" , "Futurism"},
-            {"pufferGirl" , "Rise"},
-            {"bunGirl" , "Shine"},
-            {"headManNoJetpack" , "Faux (Prelude)"},
-            {"eightBallBoss" , "DOT EXE (Boss)"},
-            {"legendMetalHead" , "Red Felix (Dream)"},
-        };
-
-        public CharacterHandler(/*Characters character*/) : base(HandlerTypes.Character) {
-            //this.CURRENTCHARACTER = character;
-            //AssetFolder = Main.CharactersFolder.CreateSubdirectory(CharacterToString(CURRENTCHARACTER));
-        }
-
         override public void GetAssets() {
+            // Get Index
+            GetIndex();
+
             // Clean
             FOLDERS.Clear();
 
-            // Get Index
-            INDEX_MESH = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].charMesh;
-            INDEX_TEXTURE = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].charTex;
-
-            if (ConvertNames.ContainsKey(Main.CURRENTCHARACTER)) {
-                AssetFolder = Main.CharactersFolder.CreateSubdirectory(ConvertNames[Main.CURRENTCHARACTER]);
-            } else {
-                AssetFolder = Main.CharactersFolder.CreateSubdirectory(Main.CURRENTCHARACTER);
-            }
-
             // Search & Add
+            AssetFolder = Main.FolderCharacter.CreateSubdirectory(Main.CURRENTCHARACTER);
             DirectoryInfo[] folders = AssetFolder.GetDirectories();
             foreach (DirectoryInfo folder in folders) {
                 FileInfo[] files = folder.GetFiles("*", SearchOption.TopDirectoryOnly);
@@ -127,6 +86,11 @@ namespace DripRemix.Handlers {
                     }
                 }
             }
+        }
+
+        void GetIndex() {
+            INDEX_MESH = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].charMesh;
+            INDEX_TEXTURE = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].charTex;
         }
     }
 }

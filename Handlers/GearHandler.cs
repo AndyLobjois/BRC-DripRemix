@@ -9,35 +9,22 @@ namespace DripRemix.Handlers {
         public MoveStyle MOVESTYLE;
         public string movestyleName => MOVESTYLE.ToString().ToLower().FirstCharToUpper();
 
-        public GearHandler(MoveStyle moveStyle) : base (HandlerTypes.Gear) {
+        public GearHandler(MoveStyle moveStyle) {
             this.MOVESTYLE = moveStyle;
-            AssetFolder = Main.GearsFolder.CreateSubdirectory(movestyleName);
         }
 
         override public void GetAssets() {
+            GetIndex();
+            AssetFolder = Main.FolderGears.CreateSubdirectory(movestyleName);
             base.GetAssets();
             LoadDetails(MOVESTYLE.ToString().ToLower().FirstCharToUpper(), null);
-
-            // Get Index
-            if (MOVESTYLE == MoveStyle.INLINE) {
-                INDEX_MESH = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].inlineMesh;
-                INDEX_TEXTURE = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].inlineTex;
-            }
-            if (MOVESTYLE == MoveStyle.SKATEBOARD) {
-                INDEX_MESH = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].skateboardMesh;
-                INDEX_TEXTURE = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].skateboardTex;
-            }
-            if (MOVESTYLE == MoveStyle.BMX) {
-                INDEX_MESH = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].bmxMesh;
-                INDEX_TEXTURE = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].bmxTex;
-            }
         }
 
-        override public void SetMesh(int indexMod) {
+        override public void SetMesh(int add) {
             // Check if there is at least something to change
             if (FOLDERS.Count > 0) {
                 // Add value to the Index
-                INDEX_MESH = Mathf.Clamp(INDEX_MESH + indexMod, 0, FOLDERS.Count - 1);
+                INDEX_MESH = Mathf.Clamp(INDEX_MESH + add, 0, FOLDERS.Count - 1);
 
                 // Change every reference by the new model
                 foreach (GameObject _ref in REFERENCES) {
@@ -82,16 +69,16 @@ namespace DripRemix.Handlers {
             }
         }
 
-        override public void SetTexture(int indexMod) {
+        override public void SetTexture(int add) {
             // Check if there is at least something to change
             if (FOLDERS.Count > 0) {
                 // Add value to the Index
-                INDEX_TEXTURE = Mathf.Clamp(INDEX_TEXTURE + indexMod, 0, FOLDERS[INDEX_MESH].textures.Count - 1);
+                INDEX_TEXTURE = Mathf.Clamp(INDEX_TEXTURE + add, 0, FOLDERS[INDEX_MESH].textures.Count - 1);
 
                 // Change every references by the new texture
                 foreach (GameObject _ref in REFERENCES) {
                     try {
-                        foreach (Material mat in _ref.GetComponent<MeshRenderer>().sharedMaterials) {
+                        foreach (Material mat in _ref.GetComponent<MeshRenderer>().materials) {
                             mat.mainTexture = FOLDERS[INDEX_MESH].textures[INDEX_TEXTURE];
                             mat.SetTexture("_Emission", FOLDERS[INDEX_MESH].emissions[INDEX_TEXTURE]);
                         }
@@ -99,6 +86,21 @@ namespace DripRemix.Handlers {
                         Main.Log.LogError($"Missing texture : {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}\\{_ref.name}");
                     }
                 }
+            }
+        }
+
+        void GetIndex() {
+            if (MOVESTYLE == MoveStyle.INLINE) {
+                INDEX_MESH = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].inlineMesh;
+                INDEX_TEXTURE = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].inlineTex;
+            }
+            if (MOVESTYLE == MoveStyle.SKATEBOARD) {
+                INDEX_MESH = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].skateboardMesh;
+                INDEX_TEXTURE = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].skateboardTex;
+            }
+            if (MOVESTYLE == MoveStyle.BMX) {
+                INDEX_MESH = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].bmxMesh;
+                INDEX_TEXTURE = Main.SAVE.SaveLines[Main.CURRENTCHARACTER].bmxTex;
             }
         }
     }

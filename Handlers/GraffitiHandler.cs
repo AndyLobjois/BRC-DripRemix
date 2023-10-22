@@ -3,10 +3,7 @@ using Reptile;
 
 namespace DripRemix.Handlers {
 
-    public class GraffitiHandler : DripHandler
-    {
-        public GraffitiHandler() : base(HandlerTypes.Graffiti)
-        {
-        }
+    public class GraffitiHandler : DripHandler {
+
     }
 }
