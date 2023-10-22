@@ -52,3 +52,4 @@ Check the [**Thunderstore Page**](https://lethal-league-blaze.thunderstore.io/c/
 - [1.0.4] Fix Phone Cameras + New feature: cameras pos/rot/fov can be changed from info.txt
 - [1.0.5] Preventing errors-lock after wrong installation/updates from user with better logs and being more permissive. Also Custom Character Replacement are now detected and you can force the texture override from the info.txt of the Character Folder.
 - [1.0.6] EVEN BETTER LOGS and preventing the plugin from stopping
+- [1.0.7] Custom Character Compatible (Replacement/Additional), Auto Folder Structure, Hideout Gears display Custom Mesh/Tex, Skateboard UV/Baskitty UV/Spike BMX fixes, BMX Wheel Texture Correctly Set
