@@ -8,35 +8,49 @@ namespace DripRemix {
 
         public Main main;
         public Dictionary<string, SaveLine> SaveLines = new Dictionary<string, SaveLine>();
-        
+        string path = Main.FolderModding + "/save";
+
         public void GetSave() {
             // Clean
             SaveLines.Clear();
 
-            // Check Save File if Exist/Corrupted
+            // Check Save File if Exist
+            if (!File.Exists(path)) {
+                var NewSaveFile = File.Create(path);
+                NewSaveFile.Dispose();
+                Main.Log.LogMessage("No save file detected !\nA new save file have been created inside ModdingFolder/Brc-DripRemix.");
+                ReadSaveFile();
+            } else {
+                ReadSaveFile();
+            }
+        }
+
+        void ReadSaveFile() {
             try {
                 // Get Save
-                FileInfo file = new FileInfo(BepInEx.Paths.PluginPath + "/BRC-DripRemix/save");
+                FileInfo file = new FileInfo(path);
                 string[] allLines = File.ReadAllLines(file.FullName);
 
-                // Get Data
-                foreach (string line in allLines) {
-                    string[] item = line.Split(',');
+                if (allLines != null) {
+                    // Get Data
+                    foreach (string line in allLines) {
+                        string[] item = line.Split(',');
 
-                    SaveLines.Add(item[0], new SaveLine(            // Name
-                        int.Parse(item[1]), int.Parse(item[2]),     // Character Mesh/Tex
-                        int.Parse(item[3]), int.Parse(item[4]),     // Inline Mesh/Tex
-                        int.Parse(item[5]), int.Parse(item[6]),     // Skateboard Mesh/Tex
-                        int.Parse(item[7]), int.Parse(item[8]),     // BMX Mesh/Tex
-                        int.Parse(item[9]), int.Parse(item[10]),    // Phone Mesh/Tex
-                        int.Parse(item[11]), int.Parse(item[12])    // Spraycan Mesh/Tex
-                        ));
+                        SaveLines.Add(item[0], new SaveLine(            // Name
+                            int.Parse(item[1]), int.Parse(item[2]),     // Character Mesh/Tex
+                            int.Parse(item[3]), int.Parse(item[4]),     // Inline Mesh/Tex
+                            int.Parse(item[5]), int.Parse(item[6]),     // Skateboard Mesh/Tex
+                            int.Parse(item[7]), int.Parse(item[8]),     // BMX Mesh/Tex
+                            int.Parse(item[9]), int.Parse(item[10]),    // Phone Mesh/Tex
+                            int.Parse(item[11]), int.Parse(item[12])    // Spraycan Mesh/Tex
+                            ));
+                    }
                 }
 
                 // New Save Slot
                 if (!SaveLines.ContainsKey(Main.CURRENTCHARACTER)) {
                     // Add Line
-                    SaveLines.Add(Main.CURRENTCHARACTER, new SaveLine(0,0,0,0,0,0,0,0,0,0,0,0));
+                    SaveLines.Add(Main.CURRENTCHARACTER, new SaveLine(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
 
                     // Clean
                     main.CHARACTER.INDEX_MESH = 0;
@@ -56,11 +70,7 @@ namespace DripRemix {
                     SetSave();
                 }
             } catch {
-                Main.Log.LogError("Missing or Corrupted Save File.\nIf you want a New Save File, delete the Save File from BRC-DripRemix plugin folder and restart the game.");
-
-                if (!File.Exists(BepInEx.Paths.PluginPath + "/BRC-DripRemix/save")) {
-                    File.Create(BepInEx.Paths.PluginPath + "/BRC-DripRemix/save");
-                }
+                Main.Log.LogError("DripRemix can't read the save file.\nPlease fix or remove the save file from ModdingFolder/BRC-DripRemix");
             }
         }
 
@@ -99,7 +109,7 @@ namespace DripRemix {
                     $"{item.Value.spraycanTex}" +
                     "\n";
             }
-            File.WriteAllText(BepInEx.Paths.PluginPath + "/BRC-DripRemix/save", text);
+            File.WriteAllText(path, text);
         }
     }
 
