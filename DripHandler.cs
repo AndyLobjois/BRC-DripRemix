@@ -22,11 +22,9 @@ namespace DripRemix.Handlers {
 
             // Search & Add
             DirectoryInfo[] folders = AssetFolder.GetDirectories();
-            foreach (DirectoryInfo folder in folders)
-            {
+            foreach (DirectoryInfo folder in folders) {
                 // Check if there is Folder to open
-                if (Directory.GetFileSystemEntries(folder.FullName).Length != 0)
-                {
+                if (Directory.GetFileSystemEntries(folder.FullName).Length != 0) {
                     FileInfo[] files = folder.GetFiles("*", SearchOption.TopDirectoryOnly);
 
                     Dictionary<string, Mesh> meshes = new Dictionary<string, Mesh>();
@@ -83,7 +81,7 @@ namespace DripRemix.Handlers {
 
                     FOLDERS.Add(new AssetFolder(folder, meshes, textures, emissions, parameters, sprites1, sprites2));
                 }
-            }   
+            }
         }
 
         public Dictionary<string, string> GetParameters(FileInfo file) {

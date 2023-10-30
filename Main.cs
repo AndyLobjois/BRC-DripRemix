@@ -171,6 +171,9 @@ namespace DripRemix {
                 GetReferences();
                 GetAssets();
                 Apply();
+
+                // End Mark
+                Log.LogMessage($"————————————————————————————————————————— {RandomLine()}");
             }
         }
 

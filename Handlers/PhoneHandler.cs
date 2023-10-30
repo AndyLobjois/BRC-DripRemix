@@ -13,10 +13,8 @@ namespace DripRemix.Handlers {
             base.GetAssets();
             LoadDetails("Phone", null);
 
-            try {
+            if (FOLDERS.Count > 0) {
                 SetCameras();
-            } catch {
-                Main.Log.LogError($"Can't set Phone Cameras. Please, verify the parameters of {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}\\info.txt");
             }
         }
 
@@ -82,38 +80,42 @@ namespace DripRemix.Handlers {
             GameObject cameraRear = visual.handL.Find("propl/phoneInHand(Clone)/phoneCameras/rearCamera").gameObject;
             string[] split;
 
-            // Screen
-            screen.SetActive(false);
+            try {
+                // Screen
+                screen.SetActive(false);
 
-            // Set Camera Front Position/Rotation/FOV
-            cameraFront.GetComponent<Camera>().fieldOfView = float.Parse(FOLDERS[INDEX_MESH].parameters["cameraFront_fov"]);
-            split = FOLDERS[INDEX_MESH].parameters["cameraFront_position"].Split(',');
-            cameraFront.transform.localPosition = new Vector3(
-                float.Parse(split[0], CultureInfo.InvariantCulture.NumberFormat),
-                float.Parse(split[1], CultureInfo.InvariantCulture.NumberFormat),
-                float.Parse(split[2], CultureInfo.InvariantCulture.NumberFormat)
-            );
-            split = FOLDERS[INDEX_MESH].parameters["cameraFront_rotation"].Split(',');
-            cameraFront.transform.localEulerAngles = new Vector3(
-                float.Parse(split[0], CultureInfo.InvariantCulture.NumberFormat),
-                float.Parse(split[1], CultureInfo.InvariantCulture.NumberFormat),
-                float.Parse(split[2], CultureInfo.InvariantCulture.NumberFormat)
-            );
+                // Set Camera Front Position/Rotation/FOV
+                cameraFront.GetComponent<Camera>().fieldOfView = float.Parse(FOLDERS[INDEX_MESH].parameters["cameraFront_fov"]);
+                split = FOLDERS[INDEX_MESH].parameters["cameraFront_position"].Split(',');
+                cameraFront.transform.localPosition = new Vector3(
+                    float.Parse(split[0], CultureInfo.InvariantCulture.NumberFormat),
+                    float.Parse(split[1], CultureInfo.InvariantCulture.NumberFormat),
+                    float.Parse(split[2], CultureInfo.InvariantCulture.NumberFormat)
+                );
+                split = FOLDERS[INDEX_MESH].parameters["cameraFront_rotation"].Split(',');
+                cameraFront.transform.localEulerAngles = new Vector3(
+                    float.Parse(split[0], CultureInfo.InvariantCulture.NumberFormat),
+                    float.Parse(split[1], CultureInfo.InvariantCulture.NumberFormat),
+                    float.Parse(split[2], CultureInfo.InvariantCulture.NumberFormat)
+                );
 
-            // Set Camera Rear Position/Rotation/FOV
-            cameraRear.GetComponent<Camera>().fieldOfView = float.Parse(FOLDERS[INDEX_MESH].parameters["cameraRear_fov"]);
-            split = FOLDERS[INDEX_MESH].parameters["cameraRear_position"].Split(',');
-            cameraRear.transform.localPosition = new Vector3(
-                float.Parse(split[0], CultureInfo.InvariantCulture.NumberFormat),
-                float.Parse(split[1], CultureInfo.InvariantCulture.NumberFormat),
-                float.Parse(split[2], CultureInfo.InvariantCulture.NumberFormat)
-            );
-            split = FOLDERS[INDEX_MESH].parameters["cameraRear_rotation"].Split(',');
-            cameraRear.transform.localEulerAngles = new Vector3(
-                float.Parse(split[0], CultureInfo.InvariantCulture.NumberFormat),
-                float.Parse(split[1], CultureInfo.InvariantCulture.NumberFormat),
-                float.Parse(split[2], CultureInfo.InvariantCulture.NumberFormat)
-            );
+                // Set Camera Rear Position/Rotation/FOV
+                cameraRear.GetComponent<Camera>().fieldOfView = float.Parse(FOLDERS[INDEX_MESH].parameters["cameraRear_fov"]);
+                split = FOLDERS[INDEX_MESH].parameters["cameraRear_position"].Split(',');
+                cameraRear.transform.localPosition = new Vector3(
+                    float.Parse(split[0], CultureInfo.InvariantCulture.NumberFormat),
+                    float.Parse(split[1], CultureInfo.InvariantCulture.NumberFormat),
+                    float.Parse(split[2], CultureInfo.InvariantCulture.NumberFormat)
+                );
+                split = FOLDERS[INDEX_MESH].parameters["cameraRear_rotation"].Split(',');
+                cameraRear.transform.localEulerAngles = new Vector3(
+                    float.Parse(split[0], CultureInfo.InvariantCulture.NumberFormat),
+                    float.Parse(split[1], CultureInfo.InvariantCulture.NumberFormat),
+                    float.Parse(split[2], CultureInfo.InvariantCulture.NumberFormat)
+                );
+            } catch {
+                Main.Log.LogError($"Can't set Phone Cameras. Please, verify the parameters of {FOLDERS[INDEX_MESH].directory.Parent.Name}\\{FOLDERS[INDEX_MESH].directory.Name}\\info.txt");
+            }
         }
 
         void GetIndex() {
