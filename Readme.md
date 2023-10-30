@@ -54,3 +54,4 @@ Check the [**Thunderstore Page**](https://lethal-league-blaze.thunderstore.io/c/
 - [1.0.6] EVEN BETTER LOGS and preventing the plugin from stopping
 - [1.0.7] Custom Character Compatible (Replacement/Additional), Auto Folder Structure, Hideout Gears display Custom Mesh/Tex, Skateboard UV/Baskitty UV/Spike BMX fixes, BMX Wheel Texture Correctly Set
 - [1.0.8] Save File Location Fix (for R2MM and avoid access violation)
+- [1.0.9] Preventing errors after wrong installation
