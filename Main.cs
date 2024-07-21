@@ -411,7 +411,11 @@ namespace DripRemix {
 
         void Apply() {
             CHARACTER.Apply();
-            GEARS[WorldHandler.instance.currentPlayer.moveStyleEquipped].Apply();
+            // I apply on every movestyle instead for QuickSwap compatibility. Between stages, non-used gears will not be initialized.
+            //GEARS[WorldHandler.instance.currentPlayer.moveStyleEquipped].Apply();
+            GEARS[MoveStyle.INLINE].Apply();
+            GEARS[MoveStyle.SKATEBOARD].Apply();
+            GEARS[MoveStyle.BMX].Apply();
             PHONES.Apply();
             SPRAYCANS.Apply();
         }
