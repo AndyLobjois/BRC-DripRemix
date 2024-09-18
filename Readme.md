@@ -4,7 +4,7 @@
 
 ### Swap Skins and Models for your Character, Gears, Phone & Spraycan directly in-game ! (No Unity required)
 
-- *`Unlimited Skins Swap per Character` → Character models can't be swap for now ! Sorry !*
+- *`Unlimited Skins Swap per Character` → Character models can't be swap, use [CrewBoom](https://thunderstore.io/c/bomb-rush-cyberfunk/p/SoftGoat/CrewBoom/) instead !*
 - *`Unlimited Skins/Models Swap for Movestyles/Gears, Phone and Spraycan`*
 - *`Custom Color Spray` → Takes bottom left pixel from the texture*
 - *`Advance Texture Options` → Emission maps for everything and Phone UI*
@@ -18,9 +18,26 @@
 
 Check the [**Thunderstore Page**](https://lethal-league-blaze.thunderstore.io/c/bomb-rush-cyberfunk/p/AndyLobjois/DripRemix/) for more informations ★
 
-# HOW TO MAKE YOUR OWN SKINS/MODELS
+# HOW TO MAKE YOUR OWN SKINS
 
-- No Unity required ! Dig it !
+### <ins>Basic Texture Editing</ins>
+- Get your texture or extract the texture from a bundle (Custom Character) with [Asset Studio](https://github.com/Perfare/AssetStudio)
+- Edit the texture with any 2D Software like Krita, GIMP, Paint.net or Paint !
+
+### <ins>Custom Color Spray</ins>
+- On your Spraycan texture, color the bottom left pixels (3x3)
+- The color spray will change from it !
+
+### <ins>Emission Map</ins>
+- In BRC, Emission map only affect the shadows, which means you can control a part of the texture to never be (or slightly) affected by shadows
+- If you have a texture named `MyTex.png`, just create a new one called `MyTex_Emission.png` and DripRemix will detect it
+
+### <ins>Quick Reload with F5</ins>
+- You don't need to restard the game everytime, just press `F5` and select your skin/model !
+
+# HOW TO MAKE YOUR OWN MODELS
+
+- No Unity required !
 - Duplicate a folder from your `ModdingFolder` as a template (I recommand my [**Examples.zip**](https://github.com/AndyLobjois/BRC-DripRemix/blob/main/RESOURCES/Examples.zip))
 - Download [**Models.zip**](https://github.com/AndyLobjois/BRC-DripRemix/blob/main/RESOURCES/Models.zip)
 - Edit the `.blend` of your choice
